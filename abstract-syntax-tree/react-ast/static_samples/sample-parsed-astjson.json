@@ -1,0 +1,1331 @@
+{
+  "type": "Object",
+  "children": [
+    {
+      "type": "Property",
+      "key": { "type": "Identifier", "value": "type", "raw": "\"type\"" },
+      "value": { "type": "Literal", "value": "Program", "raw": "\"Program\"" }
+    },
+    {
+      "type": "Property",
+      "key": { "type": "Identifier", "value": "start", "raw": "\"start\"" },
+      "value": { "type": "Literal", "value": 0, "raw": "0" }
+    },
+    {
+      "type": "Property",
+      "key": { "type": "Identifier", "value": "end", "raw": "\"end\"" },
+      "value": { "type": "Literal", "value": 31, "raw": "31" }
+    },
+    {
+      "type": "Property",
+      "key": { "type": "Identifier", "value": "loc", "raw": "\"loc\"" },
+      "value": {
+        "type": "Object",
+        "children": [
+          {
+            "type": "Property",
+            "key": {
+              "type": "Identifier",
+              "value": "start",
+              "raw": "\"start\""
+            },
+            "value": {
+              "type": "Object",
+              "children": [
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "value": "line",
+                    "raw": "\"line\""
+                  },
+                  "value": { "type": "Literal", "value": 1, "raw": "1" }
+                },
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "value": "column",
+                    "raw": "\"column\""
+                  },
+                  "value": { "type": "Literal", "value": 0, "raw": "0" }
+                }
+              ]
+            }
+          },
+          {
+            "type": "Property",
+            "key": { "type": "Identifier", "value": "end", "raw": "\"end\"" },
+            "value": {
+              "type": "Object",
+              "children": [
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "value": "line",
+                    "raw": "\"line\""
+                  },
+                  "value": { "type": "Literal", "value": 1, "raw": "1" }
+                },
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "value": "column",
+                    "raw": "\"column\""
+                  },
+                  "value": { "type": "Literal", "value": 31, "raw": "31" }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Property",
+      "key": { "type": "Identifier", "value": "range", "raw": "\"range\"" },
+      "value": {
+        "type": "Array",
+        "children": [
+          { "type": "Literal", "value": 0, "raw": "0" },
+          { "type": "Literal", "value": 31, "raw": "31" }
+        ]
+      }
+    },
+    {
+      "type": "Property",
+      "key": {
+        "type": "Identifier",
+        "value": "comments",
+        "raw": "\"comments\""
+      },
+      "value": { "type": "Array", "children": [] }
+    },
+    {
+      "type": "Property",
+      "key": {
+        "type": "Identifier",
+        "value": "sourceType",
+        "raw": "\"sourceType\""
+      },
+      "value": { "type": "Literal", "value": "module", "raw": "\"module\"" }
+    },
+    {
+      "type": "Property",
+      "key": { "type": "Identifier", "value": "body", "raw": "\"body\"" },
+      "value": {
+        "type": "Array",
+        "children": [
+          {
+            "type": "Object",
+            "children": [
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "value": "type",
+                  "raw": "\"type\""
+                },
+                "value": {
+                  "type": "Literal",
+                  "value": "ExpressionStatement",
+                  "raw": "\"ExpressionStatement\""
+                }
+              },
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "value": "start",
+                  "raw": "\"start\""
+                },
+                "value": { "type": "Literal", "value": 0, "raw": "0" }
+              },
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "value": "end",
+                  "raw": "\"end\""
+                },
+                "value": { "type": "Literal", "value": 31, "raw": "31" }
+              },
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "value": "loc",
+                  "raw": "\"loc\""
+                },
+                "value": {
+                  "type": "Object",
+                  "children": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "start",
+                        "raw": "\"start\""
+                      },
+                      "value": {
+                        "type": "Object",
+                        "children": [
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "line",
+                              "raw": "\"line\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": 1,
+                              "raw": "1"
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "column",
+                              "raw": "\"column\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": 0,
+                              "raw": "0"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "end",
+                        "raw": "\"end\""
+                      },
+                      "value": {
+                        "type": "Object",
+                        "children": [
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "line",
+                              "raw": "\"line\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": 1,
+                              "raw": "1"
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "column",
+                              "raw": "\"column\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": 31,
+                              "raw": "31"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "value": "range",
+                  "raw": "\"range\""
+                },
+                "value": {
+                  "type": "Array",
+                  "children": [
+                    { "type": "Literal", "value": 0, "raw": "0" },
+                    { "type": "Literal", "value": 31, "raw": "31" }
+                  ]
+                }
+              },
+              {
+                "type": "Property",
+                "key": {
+                  "type": "Identifier",
+                  "value": "expression",
+                  "raw": "\"expression\""
+                },
+                "value": {
+                  "type": "Object",
+                  "children": [
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "type",
+                        "raw": "\"type\""
+                      },
+                      "value": {
+                        "type": "Literal",
+                        "value": "JSXElement",
+                        "raw": "\"JSXElement\""
+                      }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "start",
+                        "raw": "\"start\""
+                      },
+                      "value": { "type": "Literal", "value": 0, "raw": "0" }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "end",
+                        "raw": "\"end\""
+                      },
+                      "value": { "type": "Literal", "value": 31, "raw": "31" }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "loc",
+                        "raw": "\"loc\""
+                      },
+                      "value": {
+                        "type": "Object",
+                        "children": [
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "start",
+                              "raw": "\"start\""
+                            },
+                            "value": {
+                              "type": "Object",
+                              "children": [
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "line",
+                                    "raw": "\"line\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "column",
+                                    "raw": "\"column\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": 0,
+                                    "raw": "0"
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "end",
+                              "raw": "\"end\""
+                            },
+                            "value": {
+                              "type": "Object",
+                              "children": [
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "line",
+                                    "raw": "\"line\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "column",
+                                    "raw": "\"column\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": 31,
+                                    "raw": "31"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "range",
+                        "raw": "\"range\""
+                      },
+                      "value": {
+                        "type": "Array",
+                        "children": [
+                          { "type": "Literal", "value": 0, "raw": "0" },
+                          { "type": "Literal", "value": 31, "raw": "31" }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "openingElement",
+                        "raw": "\"openingElement\""
+                      },
+                      "value": {
+                        "type": "Object",
+                        "children": [
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "type",
+                              "raw": "\"type\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": "JSXOpeningElement",
+                              "raw": "\"JSXOpeningElement\""
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "start",
+                              "raw": "\"start\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": 0,
+                              "raw": "0"
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "end",
+                              "raw": "\"end\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": 31,
+                              "raw": "31"
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "loc",
+                              "raw": "\"loc\""
+                            },
+                            "value": {
+                              "type": "Object",
+                              "children": [
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "start",
+                                    "raw": "\"start\""
+                                  },
+                                  "value": {
+                                    "type": "Object",
+                                    "children": [
+                                      {
+                                        "type": "Property",
+                                        "key": {
+                                          "type": "Identifier",
+                                          "value": "line",
+                                          "raw": "\"line\""
+                                        },
+                                        "value": {
+                                          "type": "Literal",
+                                          "value": 1,
+                                          "raw": "1"
+                                        }
+                                      },
+                                      {
+                                        "type": "Property",
+                                        "key": {
+                                          "type": "Identifier",
+                                          "value": "column",
+                                          "raw": "\"column\""
+                                        },
+                                        "value": {
+                                          "type": "Literal",
+                                          "value": 0,
+                                          "raw": "0"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "end",
+                                    "raw": "\"end\""
+                                  },
+                                  "value": {
+                                    "type": "Object",
+                                    "children": [
+                                      {
+                                        "type": "Property",
+                                        "key": {
+                                          "type": "Identifier",
+                                          "value": "line",
+                                          "raw": "\"line\""
+                                        },
+                                        "value": {
+                                          "type": "Literal",
+                                          "value": 1,
+                                          "raw": "1"
+                                        }
+                                      },
+                                      {
+                                        "type": "Property",
+                                        "key": {
+                                          "type": "Identifier",
+                                          "value": "column",
+                                          "raw": "\"column\""
+                                        },
+                                        "value": {
+                                          "type": "Literal",
+                                          "value": 31,
+                                          "raw": "31"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "range",
+                              "raw": "\"range\""
+                            },
+                            "value": {
+                              "type": "Array",
+                              "children": [
+                                { "type": "Literal", "value": 0, "raw": "0" },
+                                { "type": "Literal", "value": 31, "raw": "31" }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "name",
+                              "raw": "\"name\""
+                            },
+                            "value": {
+                              "type": "Object",
+                              "children": [
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "type",
+                                    "raw": "\"type\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": "JSXIdentifier",
+                                    "raw": "\"JSXIdentifier\""
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "start",
+                                    "raw": "\"start\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "end",
+                                    "raw": "\"end\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": 17,
+                                    "raw": "17"
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "loc",
+                                    "raw": "\"loc\""
+                                  },
+                                  "value": {
+                                    "type": "Object",
+                                    "children": [
+                                      {
+                                        "type": "Property",
+                                        "key": {
+                                          "type": "Identifier",
+                                          "value": "start",
+                                          "raw": "\"start\""
+                                        },
+                                        "value": {
+                                          "type": "Object",
+                                          "children": [
+                                            {
+                                              "type": "Property",
+                                              "key": {
+                                                "type": "Identifier",
+                                                "value": "line",
+                                                "raw": "\"line\""
+                                              },
+                                              "value": {
+                                                "type": "Literal",
+                                                "value": 1,
+                                                "raw": "1"
+                                              }
+                                            },
+                                            {
+                                              "type": "Property",
+                                              "key": {
+                                                "type": "Identifier",
+                                                "value": "column",
+                                                "raw": "\"column\""
+                                              },
+                                              "value": {
+                                                "type": "Literal",
+                                                "value": 1,
+                                                "raw": "1"
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "type": "Property",
+                                        "key": {
+                                          "type": "Identifier",
+                                          "value": "end",
+                                          "raw": "\"end\""
+                                        },
+                                        "value": {
+                                          "type": "Object",
+                                          "children": [
+                                            {
+                                              "type": "Property",
+                                              "key": {
+                                                "type": "Identifier",
+                                                "value": "line",
+                                                "raw": "\"line\""
+                                              },
+                                              "value": {
+                                                "type": "Literal",
+                                                "value": 1,
+                                                "raw": "1"
+                                              }
+                                            },
+                                            {
+                                              "type": "Property",
+                                              "key": {
+                                                "type": "Identifier",
+                                                "value": "column",
+                                                "raw": "\"column\""
+                                              },
+                                              "value": {
+                                                "type": "Literal",
+                                                "value": 17,
+                                                "raw": "17"
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "range",
+                                    "raw": "\"range\""
+                                  },
+                                  "value": {
+                                    "type": "Array",
+                                    "children": [
+                                      {
+                                        "type": "Literal",
+                                        "value": 1,
+                                        "raw": "1"
+                                      },
+                                      {
+                                        "type": "Literal",
+                                        "value": 17,
+                                        "raw": "17"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "Property",
+                                  "key": {
+                                    "type": "Identifier",
+                                    "value": "name",
+                                    "raw": "\"name\""
+                                  },
+                                  "value": {
+                                    "type": "Literal",
+                                    "value": "ClassDeclaration",
+                                    "raw": "\"ClassDeclaration\""
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "attributes",
+                              "raw": "\"attributes\""
+                            },
+                            "value": {
+                              "type": "Array",
+                              "children": [
+                                {
+                                  "type": "Object",
+                                  "children": [
+                                    {
+                                      "type": "Property",
+                                      "key": {
+                                        "type": "Identifier",
+                                        "value": "type",
+                                        "raw": "\"type\""
+                                      },
+                                      "value": {
+                                        "type": "Literal",
+                                        "value": "JSXAttribute",
+                                        "raw": "\"JSXAttribute\""
+                                      }
+                                    },
+                                    {
+                                      "type": "Property",
+                                      "key": {
+                                        "type": "Identifier",
+                                        "value": "start",
+                                        "raw": "\"start\""
+                                      },
+                                      "value": {
+                                        "type": "Literal",
+                                        "value": 18,
+                                        "raw": "18"
+                                      }
+                                    },
+                                    {
+                                      "type": "Property",
+                                      "key": {
+                                        "type": "Identifier",
+                                        "value": "end",
+                                        "raw": "\"end\""
+                                      },
+                                      "value": {
+                                        "type": "Literal",
+                                        "value": 28,
+                                        "raw": "28"
+                                      }
+                                    },
+                                    {
+                                      "type": "Property",
+                                      "key": {
+                                        "type": "Identifier",
+                                        "value": "loc",
+                                        "raw": "\"loc\""
+                                      },
+                                      "value": {
+                                        "type": "Object",
+                                        "children": [
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "start",
+                                              "raw": "\"start\""
+                                            },
+                                            "value": {
+                                              "type": "Object",
+                                              "children": [
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "line",
+                                                    "raw": "\"line\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Literal",
+                                                    "value": 1,
+                                                    "raw": "1"
+                                                  }
+                                                },
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "column",
+                                                    "raw": "\"column\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Literal",
+                                                    "value": 18,
+                                                    "raw": "18"
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "end",
+                                              "raw": "\"end\""
+                                            },
+                                            "value": {
+                                              "type": "Object",
+                                              "children": [
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "line",
+                                                    "raw": "\"line\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Literal",
+                                                    "value": 1,
+                                                    "raw": "1"
+                                                  }
+                                                },
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "column",
+                                                    "raw": "\"column\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Literal",
+                                                    "value": 28,
+                                                    "raw": "28"
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "type": "Property",
+                                      "key": {
+                                        "type": "Identifier",
+                                        "value": "range",
+                                        "raw": "\"range\""
+                                      },
+                                      "value": {
+                                        "type": "Array",
+                                        "children": [
+                                          {
+                                            "type": "Literal",
+                                            "value": 18,
+                                            "raw": "18"
+                                          },
+                                          {
+                                            "type": "Literal",
+                                            "value": 28,
+                                            "raw": "28"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "type": "Property",
+                                      "key": {
+                                        "type": "Identifier",
+                                        "value": "name",
+                                        "raw": "\"name\""
+                                      },
+                                      "value": {
+                                        "type": "Object",
+                                        "children": [
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "type",
+                                              "raw": "\"type\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": "JSXIdentifier",
+                                              "raw": "\"JSXIdentifier\""
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "start",
+                                              "raw": "\"start\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": 18,
+                                              "raw": "18"
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "end",
+                                              "raw": "\"end\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": 20,
+                                              "raw": "20"
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "loc",
+                                              "raw": "\"loc\""
+                                            },
+                                            "value": {
+                                              "type": "Object",
+                                              "children": [
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "start",
+                                                    "raw": "\"start\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Object",
+                                                    "children": [
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "line",
+                                                          "raw": "\"line\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 1,
+                                                          "raw": "1"
+                                                        }
+                                                      },
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "column",
+                                                          "raw": "\"column\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 18,
+                                                          "raw": "18"
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "end",
+                                                    "raw": "\"end\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Object",
+                                                    "children": [
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "line",
+                                                          "raw": "\"line\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 1,
+                                                          "raw": "1"
+                                                        }
+                                                      },
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "column",
+                                                          "raw": "\"column\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 20,
+                                                          "raw": "20"
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "range",
+                                              "raw": "\"range\""
+                                            },
+                                            "value": {
+                                              "type": "Array",
+                                              "children": [
+                                                {
+                                                  "type": "Literal",
+                                                  "value": 18,
+                                                  "raw": "18"
+                                                },
+                                                {
+                                                  "type": "Literal",
+                                                  "value": 20,
+                                                  "raw": "20"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "name",
+                                              "raw": "\"name\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": "id",
+                                              "raw": "\"id\""
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "type": "Property",
+                                      "key": {
+                                        "type": "Identifier",
+                                        "value": "value",
+                                        "raw": "\"value\""
+                                      },
+                                      "value": {
+                                        "type": "Object",
+                                        "children": [
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "type",
+                                              "raw": "\"type\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": "Literal",
+                                              "raw": "\"Literal\""
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "start",
+                                              "raw": "\"start\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": 21,
+                                              "raw": "21"
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "end",
+                                              "raw": "\"end\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": 28,
+                                              "raw": "28"
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "loc",
+                                              "raw": "\"loc\""
+                                            },
+                                            "value": {
+                                              "type": "Object",
+                                              "children": [
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "start",
+                                                    "raw": "\"start\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Object",
+                                                    "children": [
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "line",
+                                                          "raw": "\"line\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 1,
+                                                          "raw": "1"
+                                                        }
+                                                      },
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "column",
+                                                          "raw": "\"column\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 21,
+                                                          "raw": "21"
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                {
+                                                  "type": "Property",
+                                                  "key": {
+                                                    "type": "Identifier",
+                                                    "value": "end",
+                                                    "raw": "\"end\""
+                                                  },
+                                                  "value": {
+                                                    "type": "Object",
+                                                    "children": [
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "line",
+                                                          "raw": "\"line\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 1,
+                                                          "raw": "1"
+                                                        }
+                                                      },
+                                                      {
+                                                        "type": "Property",
+                                                        "key": {
+                                                          "type": "Identifier",
+                                                          "value": "column",
+                                                          "raw": "\"column\""
+                                                        },
+                                                        "value": {
+                                                          "type": "Literal",
+                                                          "value": 28,
+                                                          "raw": "28"
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "range",
+                                              "raw": "\"range\""
+                                            },
+                                            "value": {
+                                              "type": "Array",
+                                              "children": [
+                                                {
+                                                  "type": "Literal",
+                                                  "value": 21,
+                                                  "raw": "21"
+                                                },
+                                                {
+                                                  "type": "Literal",
+                                                  "value": 28,
+                                                  "raw": "28"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "value",
+                                              "raw": "\"value\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": "Hello",
+                                              "raw": "\"Hello\""
+                                            }
+                                          },
+                                          {
+                                            "type": "Property",
+                                            "key": {
+                                              "type": "Identifier",
+                                              "value": "raw",
+                                              "raw": "\"raw\""
+                                            },
+                                            "value": {
+                                              "type": "Literal",
+                                              "value": "\"Hello\"",
+                                              "raw": "\"\\\"Hello\\\"\""
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "Property",
+                            "key": {
+                              "type": "Identifier",
+                              "value": "selfClosing",
+                              "raw": "\"selfClosing\""
+                            },
+                            "value": {
+                              "type": "Literal",
+                              "value": true,
+                              "raw": "true"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "closingElement",
+                        "raw": "\"closingElement\""
+                      },
+                      "value": {
+                        "type": "Literal",
+                        "value": null,
+                        "raw": "null"
+                      }
+                    },
+                    {
+                      "type": "Property",
+                      "key": {
+                        "type": "Identifier",
+                        "value": "children",
+                        "raw": "\"children\""
+                      },
+                      "value": { "type": "Array", "children": [] }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

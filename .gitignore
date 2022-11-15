@@ -1,0 +1,8 @@
+# Dependency directories
+node_modules/
+
+# Mac files
+.DS_Store
+
+# Project Specific
+mnist/

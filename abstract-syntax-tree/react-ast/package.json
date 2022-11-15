@@ -1,0 +1,41 @@
+{
+  "name": "react-ast-test",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "convert-js-ast.js": "babel-node ./examples/transforms/convert-js-ast",
+    "convert-react-to-ast-template.js": "babel-node ./examples/transforms/convert-react-to-ast-template",
+    "convert-full-ast-react.js": "babel-node ./examples/transforms/convert-full-ast-react",
+    "convert-astjson-react.js": "babel-node ./examples/transforms/convert-astjson-react",
+    "convert-ast-json.js": "babel-node ./examples/transforms/convert-ast-json",
+    "traverse-ast.js": "babel-node ./examples/basic/traverse-ast",
+    "sample-ast.js": "babel-node ./examples/basic/sample-ast",
+    "sample-code.js": "babel-node ./examples/basic/sample-code",
+    "sample-typed-code.js": "babel-node ./examples/basic/sample-typed-code",
+    "renderCode.js": "babel-node ./examples/basic/renderCode",
+    "checkTopLevelClasses.js": "node ./examples/basic/checkTopLevelClasses ../../../Macanta/Macanta_New_Web/src/containers/ErrorBoundary/ErrorBoundary.jsx"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "espree": "^9.4.1",
+    "json-to-ast": "^2.1.0",
+    "lodash": "^4.17.21",
+    "react": "^18.2.0",
+    "react-ast": "^0.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.7",
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/node": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.18.6",
+    "eslint": "^8.32.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jest": "^27.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "prettier": "^2.8.3"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "esprima-test",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "parseExpression.js": "node parseExpression"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esprima": "^4.0.1"
+  }
+}

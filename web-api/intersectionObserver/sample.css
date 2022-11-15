@@ -1,0 +1,49 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  height: 200vh;
+  width: 200vw;
+}
+
+#div1 {
+  position: absolute;
+  left: calc(100vw - 60px - 10px);
+  top: 10px;
+  height: 100px;
+  width: 60px;
+  background-color: red;
+  color: white;
+}
+
+#div2 {
+  position: absolute;
+  left: 20px;
+  top: 10px;
+  height: 50px;
+  width: 60px;
+  background-color: blue;
+  color: white;
+}
+
+#div3 {
+  position: absolute;
+  left: calc(100vw - 260px + 50px);
+  top: max(calc(100vh - 350px + 120px), 120px);
+  height: 350px;
+  width: 260px;
+  background-color: green;
+  color: white;
+  text-align: left;
+}
+
+#div4 {
+  position: absolute;
+  height: 9000px;
+  width: 9000px;
+  color: black;
+  background-color: yellow;
+}

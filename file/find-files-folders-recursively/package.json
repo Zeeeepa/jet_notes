@@ -1,0 +1,15 @@
+{
+  "name": "find-files-folders-recursively",
+  "version": "1.0.0",
+  "description": "",
+  "main": "find-files-folders-recursively.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^10.1.0",
+    "recursive-readdir": "^2.2.3"
+  }
+}
