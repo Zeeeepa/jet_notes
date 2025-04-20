@@ -1,73 +1,99 @@
 import os
+import argparse
 from git import Repo
 from jet.file.utils import save_file
 from datetime import datetime
 
 
-def get_last_commit_dates(base_dir):
+def get_last_commit_dates_optimized(base_dir, extensions=None):
     if not os.path.isdir(base_dir):
         raise ValueError(f"{base_dir} is not a valid directory")
 
     try:
-        # Initialize the Git repository
         repo = Repo(base_dir, search_parent_directories=True)
         if repo.bare:
             raise ValueError(f"{base_dir} is a bare repository")
 
+        tracked_paths = set(repo.git.ls_files().splitlines())
+        ignored_paths = {os.path.join(repo.working_tree_dir, p) for p in repo.git.ls_files(
+            others=True, exclude_standard=True).splitlines() if repo.ignored(os.path.join(repo.working_tree_dir, p))}
+
+        file_paths = []
+        dir_paths = []
+
+        for root, _, files in os.walk(base_dir):
+            for name in files:
+                full_path = os.path.join(root, name)
+                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
+                if rel_path in tracked_paths and full_path not in ignored_paths:
+                    if extensions:
+                        _, ext = os.path.splitext(name)
+                        if ext in extensions:
+                            file_paths.append(rel_path)
+                    else:
+                        file_paths.append(rel_path)
+            for name in _:  # Directories
+                full_path = os.path.join(root, name)
+                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
+                if rel_path not in ['.', '..'] and rel_path in tracked_paths and full_path not in ignored_paths:
+                    dir_paths.append(rel_path)
+
+        all_paths = sorted(list(set(file_paths + dir_paths)))
+        commit_times = {}
+
+        if all_paths:
+            for commit in repo.iter_commits(paths=all_paths, max_count=1, reverse=True):
+                for file_change in commit.diff(None):
+                    if file_change.a_path in all_paths:
+                        commit_times[file_change.a_path] = datetime.fromtimestamp(
+                            commit.committed_date).isoformat()
+                        if file_change.a_path in all_paths:
+                            all_paths.remove(file_change.a_path)
+                    if file_change.b_path in all_paths and file_change.b_path is not None:
+                        commit_times[file_change.b_path] = datetime.fromtimestamp(
+                            commit.committed_date).isoformat()
+                        if file_change.b_path in all_paths:
+                            all_paths.remove(file_change.b_path)
+                for path in all_paths:  # Handle cases where a file/dir exists but wasn't in the first commit
+                    if path not in commit_times:
+                        commits = list(repo.iter_commits(
+                            paths=[path], max_count=1))
+                        if commits:
+                            commit_times[path] = datetime.fromtimestamp(
+                                commits[0].committed_date).isoformat()
+
         results = []
+        for root, _, files in os.walk(base_dir):
+            for name in files:
+                full_path = os.path.join(root, name)
+                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
+                if rel_path in commit_times and full_path not in ignored_paths:
+                    results.append({
+                        "basename": name,
+                        "updated_at": commit_times[rel_path],
+                        "type": "file",
+                        "path": full_path
+                    })
+            for name in _:  # Directories
+                full_path = os.path.join(root, name)
+                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
+                if rel_path in commit_times and full_path not in ignored_paths:
+                    results.append({
+                        "basename": name,
+                        "updated_at": commit_times[rel_path],
+                        "type": "directory",
+                        "path": full_path
+                    })
 
-        def process_directory(current_dir, prefix=""):
-            dir_results = []
-            entries = os.listdir(current_dir)
+        sorted_results = sorted(results, key=lambda x: (
+            x['updated_at'], x['path']), reverse=True)
+        ranked_results = []
+        for i, item in enumerate(sorted_results):
+            ranked_item = item.copy()
+            ranked_item['rank'] = i + 1
+            ranked_results.append(ranked_item)
 
-            for entry in entries:
-                full_path = os.path.join(current_dir, entry)
-                if not os.path.exists(full_path):
-                    continue
-
-                # Skip .git directory
-                if entry == ".git":
-                    continue
-
-                try:
-                    # Get the relative path from the repo root
-                    rel_path = os.path.relpath(
-                        full_path, repo.working_tree_dir)
-
-                    # Check if the path is tracked by Git
-                    if repo.ignored(full_path) or rel_path not in repo.git.ls_files(rel_path, cached=True, others=True):
-                        continue
-
-                    # Get the latest commit that modified this file or folder
-                    commits = list(repo.iter_commits(
-                        paths=rel_path, max_count=1))
-                    if commits:
-                        last_commit = commits[0]
-                        commit_date = datetime.fromtimestamp(
-                            last_commit.committed_date).isoformat()
-                        dir_results.append({
-                            "basename": f"{prefix}{entry}",
-                            "updated_at": commit_date,
-                            "type": "directory" if os.path.isdir(full_path) else "file",
-                            "path": full_path
-                        })
-
-                    # Recursively process subdirectories
-                    if os.path.isdir(full_path):
-                        sub_results = process_directory(
-                            full_path, prefix=f"{prefix}{entry}/")
-                        dir_results.extend(sub_results)
-
-                except Exception:
-                    continue  # Skip entries with no commits or errors
-
-            return dir_results
-
-        # Process the base directory
-        results = process_directory(base_dir)
-
-        # Sort by updated_at in descending order
-        return sorted(results, key=lambda x: (x['updated_at'], x['path']), reverse=True)
+        return ranked_results
 
     except Exception as e:
         raise ValueError(
@@ -75,10 +101,26 @@ def get_last_commit_dates(base_dir):
 
 
 if __name__ == "__main__":
-    base_dir = "/Users/jethroestrada/Desktop/External_Projects/AI/code_agents/GenAI_Agents/all_agents_tutorials"
-    updates = get_last_commit_dates(base_dir)
+    parser = argparse.ArgumentParser(
+        description="Get the last commit dates of files and directories in a Git repository with improved performance and ranking.")
+    parser.add_argument("base_dir", nargs="?", default=os.getcwd(),
+                        help="The base directory of the Git repository (default: current directory).")
+    parser.add_argument("-e", "--extensions", nargs="*",
+                        help="Filter files by these extensions (e.g., .ipynb .md .mx).")
+    args = parser.parse_args()
 
-    for item in updates:
-        print(f"{item['basename']} ({item['type']}): {item['updated_at']}")
+    base_dir = args.base_dir
+    extensions = args.extensions
 
-    save_file(updates, f"{base_dir}/_git_stats.json")
+    try:
+        updates = get_last_commit_dates_optimized(base_dir, extensions)
+
+        for item in updates:
+            print(
+                f"{item['rank']}. {item['basename']} ({item['type']}): {item['updated_at']}")
+
+        save_file(updates, os.path.join(base_dir, "_git_stats.json"))
+        print(f"\nGit stats saved to: {base_dir}/_git_stats.json")
+
+    except ValueError as e:
+        print(f"Error: {e}")
