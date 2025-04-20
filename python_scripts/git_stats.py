@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import os
 import argparse
 from git import Repo
@@ -89,8 +90,9 @@ def get_last_commit_dates_optimized(base_dir, extensions=None):
             x['updated_at'], x['path']), reverse=True)
         ranked_results = []
         for i, item in enumerate(sorted_results):
-            ranked_item = item.copy()
+            ranked_item = OrderedDict()
             ranked_item['rank'] = i + 1
+            ranked_item.update(item)
             ranked_results.append(ranked_item)
 
         return ranked_results
