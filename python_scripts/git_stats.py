@@ -105,12 +105,14 @@ if __name__ == "__main__":
         description="Get the last commit dates of files and directories in a Git repository with improved performance and ranking.")
     parser.add_argument("base_dir", nargs="?", default=os.getcwd(),
                         help="The base directory of the Git repository (default: current directory).")
-    parser.add_argument("-e", "--extensions", nargs="*",
-                        help="Filter files by these extensions (e.g., .ipynb .md .mx).")
+    parser.add_argument("-e", "--extensions",
+                        help="Filter files by these extensions, comma-separated (e.g., .ipynb,.md,.mx).")
     args = parser.parse_args()
 
     base_dir = args.base_dir
-    extensions = args.extensions
+    # Split comma-separated extensions into a list, strip whitespace
+    extensions = [ext.strip() for ext in args.extensions.split(',')
+                  ] if args.extensions else None
 
     try:
         updates = get_last_commit_dates_optimized(base_dir, extensions)
