@@ -128,4 +128,4 @@ psql -h jetairm1 -p 5432 -U jethroestrada -d chat_history_db1 \
         UNION ALL
         SELECT * FROM storage
     ) AS metadata_json
-) TO STDOUT" > "$SCRIPT_DIR/chat_history_metadata.json"
+) TO STDOUT" > "$SCRIPT_DIR/chat_history_metadata.jsonl"
