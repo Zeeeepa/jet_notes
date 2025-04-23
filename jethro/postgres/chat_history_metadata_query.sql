@@ -1,4 +1,3 @@
--- Declare the table name once
 WITH vars AS (
     SELECT 'chat_history'::text AS table_name
 ),
