@@ -109,6 +109,8 @@ if __name__ == "__main__":
                         help="The base directory of the Git repository (default: current directory).")
     parser.add_argument("-e", "--extensions",
                         help="Filter files by these extensions, comma-separated (e.g., .ipynb,.md,.mx).")
+    parser.add_argument("-f", "--output-file", type=str, default=None,
+                        help="Optional path to save results as a JSON file.")
     args = parser.parse_args()
 
     base_dir = args.base_dir
@@ -123,8 +125,11 @@ if __name__ == "__main__":
             print(
                 f"{item['rank']}. {item['basename']} ({item['type']}): {item['updated_at']}")
 
-        save_file(updates, os.path.join(base_dir, "_git_stats.json"))
-        print(f"\nGit stats saved to: {base_dir}/_git_stats.json")
+        output_file = args.output_file or os.path.join(
+            base_dir, "_git_stats.json")
+
+        save_file(updates, output_file)
+        print(f"\nGit stats saved to: {output_file}")
 
     except ValueError as e:
         print(f"Error: {e}")

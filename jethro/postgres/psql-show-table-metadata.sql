@@ -1,4 +1,8 @@
-WITH columns AS (
+-- Declare the table name once
+WITH vars AS (
+    SELECT 'chat_history'::text AS table_name
+),
+columns AS (
     SELECT 
         'COLUMNS' AS section,
         jsonb_build_object(
@@ -7,8 +11,8 @@ WITH columns AS (
             'is_nullable', c.is_nullable,
             'column_default', c.column_default
         ) AS details
-    FROM information_schema.columns c
-    WHERE c.table_name = 'history'
+    FROM information_schema.columns c, vars
+    WHERE c.table_name = vars.table_name
 ),
 constraints AS (
     SELECT 
@@ -24,8 +28,8 @@ constraints AS (
                 ELSE con.contype END,
             'table_name', con.conrelid::regclass
         ) AS details
-    FROM pg_constraint con
-    WHERE con.conrelid = 'history'::regclass
+    FROM pg_constraint con, vars
+    WHERE con.conrelid = vars.table_name::regclass
 ),
 indexes AS (
     SELECT 
@@ -34,8 +38,8 @@ indexes AS (
             'index_name', idx.indexname,
             'index_definition', idx.indexdef
         ) AS details
-    FROM pg_indexes idx
-    WHERE idx.tablename = 'history'
+    FROM pg_indexes idx, vars
+    WHERE idx.tablename = vars.table_name
 ),
 enums AS (
     SELECT 
@@ -47,8 +51,8 @@ enums AS (
         ) AS details
     FROM pg_type typ
     JOIN pg_enum enum ON typ.oid = enum.enumtypid
-    JOIN information_schema.columns col ON col.udt_name = typ.typname
-    WHERE col.table_name = 'history'
+    JOIN information_schema.columns col ON col.udt_name = typ.typname, vars
+    WHERE col.table_name = vars.table_name
 ),
 table_info AS (
     SELECT 
@@ -58,8 +62,8 @@ table_info AS (
             'table_name', tablename,
             'table_owner', tableowner
         ) AS details
-    FROM pg_tables
-    WHERE tablename = 'history'
+    FROM pg_tables, vars
+    WHERE tablename = vars.table_name
 ),
 triggers AS (
     SELECT 
@@ -70,8 +74,8 @@ triggers AS (
             'table_name', relname
         ) AS details
     FROM pg_trigger 
-    JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid
-    WHERE relname = 'history'
+    JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid, vars
+    WHERE relname = vars.table_name
 ),
 foreign_keys AS (
     SELECT 
@@ -85,8 +89,8 @@ foreign_keys AS (
         ) AS details
     FROM pg_constraint con
     JOIN pg_attribute a ON a.attnum = ANY(con.conkey) AND a.attrelid = con.conrelid
-    JOIN pg_attribute fa ON fa.attnum = ANY(con.confkey) AND fa.attrelid = con.confrelid
-    WHERE con.contype = 'f' AND con.conrelid = 'history'::regclass
+    JOIN pg_attribute fa ON fa.attnum = ANY(con.confkey) AND fa.attrelid = con.confrelid, vars
+    WHERE con.contype = 'f' AND con.conrelid = vars.table_name::regclass
 ),
 storage AS (
     SELECT 
@@ -98,8 +102,8 @@ storage AS (
             'total_size', pg_size_pretty(pg_total_relation_size(cls.oid))
         ) AS details
     FROM pg_catalog.pg_statio_user_tables stat
-    JOIN pg_class cls ON cls.oid = stat.relid
-    WHERE stat.relname = 'history'
+    JOIN pg_class cls ON cls.oid = stat.relid, vars
+    WHERE stat.relname = vars.table_name
 )
 SELECT * FROM columns
 UNION ALL
