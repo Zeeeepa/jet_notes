@@ -1,0 +1,9 @@
+{"details": {"data_type": "uuid", "column_name": "session_id", "is_nullable": "NO", "column_default": null}, "section": "COLUMNS"}
+{"details": {"data_type": "jsonb", "column_name": "message", "is_nullable": "NO", "column_default": null}, "section": "COLUMNS"}
+{"details": {"data_type": "integer", "column_name": "id", "is_nullable": "NO", "column_default": "nextval('chat_history_id_seq'::regclass)"}, "section": "COLUMNS"}
+{"details": {"data_type": "timestamp with time zone", "column_name": "created_at", "is_nullable": "NO", "column_default": "now()"}, "section": "COLUMNS"}
+{"details": {"table_name": "chat_history", "constraint_name": "chat_history_pkey", "constraint_type": "P"}, "section": "CONSTRAINTS"}
+{"details": {"index_name": "chat_history_pkey", "index_definition": "CREATE UNIQUE INDEX chat_history_pkey ON public.chat_history USING btree (id)"}, "section": "INDEXES"}
+{"details": {"index_name": "idx_chat_history_session_id", "index_definition": "CREATE INDEX idx_chat_history_session_id ON public.chat_history USING btree (session_id)"}, "section": "INDEXES"}
+{"details": {"table_name": "chat_history", "schema_name": "public", "table_owner": "jethroestrada"}, "section": "TABLE_INFO"}
+{"details": {"table_name": "chat_history", "table_type": "r", "total_size": "616 kB", "estimated_rows": 483}, "section": "STORAGE"}
