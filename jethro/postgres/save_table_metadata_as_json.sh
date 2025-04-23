@@ -1,3 +1,7 @@
+#!/bin/zsh
+
+SCRIPT_DIR="${0:A:h}"
+
 psql -h jetairm1 -p 5432 -U jethroestrada -d chat_history_db1 \
 -c "\copy (
     SELECT jsonb_build_object('section', section, 'details', details)::text
@@ -124,4 +128,4 @@ psql -h jetairm1 -p 5432 -U jethroestrada -d chat_history_db1 \
         UNION ALL
         SELECT * FROM storage
     ) AS metadata_json
-) TO STDOUT" > chat_history_metadata.json
+) TO STDOUT" > "$SCRIPT_DIR/chat_history_metadata.json"
