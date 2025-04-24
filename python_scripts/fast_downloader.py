@@ -186,11 +186,11 @@ if __name__ == "__main__":
     benchmark_chunk_counts(url, output_dir)
 
 
-# if __name__ == "__main__":
-#     # Direct download URL for the specific file
-#     urls = [
-#         "http://ipv4.download.thinkbroadband.com/100MB.zip",
-#     ]
-#     output_dir = os.path.join(os.path.dirname(__file__), "downloads")
-#     num_chunks = 3  # Number of parallel chunks
-#     main(urls, output_dir, num_chunks)
+if __name__ == "__main__":
+    # Direct download URL for the specific file
+    urls = [
+        "https://huggingface.co/cognitivecomputations/Dolphin3.0-Llama3.1-8B-GGUF/blob/main/Dolphin3.0-Llama3.1-8B-Q4_0.gguf",
+    ]
+    output_dir = os.path.join(os.path.dirname(__file__), "downloads")
+    num_chunks = 3  # Number of parallel chunks
+    main(urls, output_dir, num_chunks)
