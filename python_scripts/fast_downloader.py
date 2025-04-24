@@ -4,22 +4,9 @@ import asyncio
 import os
 from urllib.parse import urlparse
 import math
+from jet.logger import logger
 from tqdm.asyncio import tqdm
 import aiohttp.client_exceptions
-import logging
-from datetime import datetime
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[
-        logging.FileHandler(
-            f"download_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
 
 
 async def get_file_size(session, url):
@@ -70,7 +57,7 @@ async def download_chunk(session, url, start, end, temp_file, chunk_index, progr
     raise RuntimeError(f"Chunk {chunk_index} failed")
 
 
-async def download_file(session, url, output_dir="downloads", num_chunks=4):
+async def download_file(session, url, output_dir="downloads", num_chunks=3):
     """Download a file in parallel chunks with progress tracking if range requests are supported."""
     try:
         # Extract filename and create output path
@@ -174,11 +161,36 @@ def main(urls, output_dir="downloads", num_chunks=4):
         f"Completed all downloads in {elapsed_time:.2f} seconds")
 
 
+def benchmark_chunk_counts(url, output_dir="downloads", max_chunks=4):
+    results = []
+    for num_chunks in range(1, max_chunks + 1):
+        logger.info(f"\nBenchmarking with {num_chunks} chunk(s)")
+        start_time = time.time()
+        asyncio.run(download_multiple_files([url], output_dir, num_chunks))
+        elapsed = time.time() - start_time
+        logger.info(
+            f"Time taken with {num_chunks} chunk(s): {elapsed:.2f} seconds")
+        results.append((num_chunks, elapsed))
+
+    # Summary of results
+    logger.info("\nBenchmark Summary:")
+    for chunks, time_taken in results:
+        logger.info(f"{chunks} chunk(s): {time_taken:.2f} seconds")
+
+
 if __name__ == "__main__":
     # Direct download URL for the specific file
-    urls = [
-        "http://ipv4.download.thinkbroadband.com/100MB.zip",
-    ]
+    url = "http://ipv4.download.thinkbroadband.com/100MB.zip"
     output_dir = os.path.join(os.path.dirname(__file__), "downloads")
-    num_chunks = 4  # Number of parallel chunks
-    main(urls, output_dir, num_chunks)
+
+    benchmark_chunk_counts(url, output_dir)
+
+
+# if __name__ == "__main__":
+#     # Direct download URL for the specific file
+#     urls = [
+#         "http://ipv4.download.thinkbroadband.com/100MB.zip",
+#     ]
+#     output_dir = os.path.join(os.path.dirname(__file__), "downloads")
+#     num_chunks = 3  # Number of parallel chunks
+#     main(urls, output_dir, num_chunks)
