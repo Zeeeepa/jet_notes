@@ -1,3 +1,4 @@
+from tqdm import tqdm  # change from tqdm.asyncio
 import time
 import aiohttp
 import asyncio
@@ -24,23 +25,30 @@ async def get_file_size(session, url):
         return 0, False
 
 
-async def download_chunk(session, url, start, end, temp_file, chunk_index, progress_bar, max_retries=3):
-    """Download a specific chunk of the file using range headers with progress tracking."""
+async def download_chunk(session, url, start, end, temp_file, chunk_index, total_pbar, max_retries=3):
     headers = {'Range': f'bytes={start}-{end}'}
     chunk_size = end - start + 1
     logger.debug(
         f"Starting download of chunk {chunk_index} ({start}-{end}) for {url}")
+
     for attempt in range(max_retries):
         try:
             async with session.get(url, headers=headers, allow_redirects=True) as response:
-                if response.status in (200, 206):  # 206 for partial content
+                if response.status in (200, 206):
                     downloaded = 0
+                    chunk_pbar = tqdm(
+                        total=chunk_size, unit='B', unit_scale=True,
+                        desc=f"Chunk {chunk_index}", position=chunk_index+1, leave=False
+                    )
                     with open(temp_file, 'r+b') as f:
                         f.seek(start)
                         async for chunk in response.content.iter_chunked(8192):
                             f.write(chunk)
-                            downloaded += len(chunk)
-                            progress_bar.update(len(chunk))
+                            chunk_len = len(chunk)
+                            downloaded += chunk_len
+                            chunk_pbar.update(chunk_len)
+                            total_pbar.update(chunk_len)
+                    chunk_pbar.close()
                     logger.info(
                         f"Completed chunk {chunk_index} ({start}-{end}) for {url}")
                     return
@@ -51,7 +59,8 @@ async def download_chunk(session, url, start, end, temp_file, chunk_index, progr
             logger.warning(
                 f"Error downloading chunk {chunk_index} for {url} (attempt {attempt + 1}/{max_retries}): {e}")
         if attempt < max_retries - 1:
-            await asyncio.sleep(2 ** attempt)  # Exponential backoff
+            await asyncio.sleep(2 ** attempt)
+
     logger.error(
         f"Failed to download chunk {chunk_index} for {url} after {max_retries} attempts")
     raise RuntimeError(f"Chunk {chunk_index} failed")
@@ -150,7 +159,7 @@ async def download_multiple_files(urls, output_dir="downloads", num_chunks=4):
         await asyncio.gather(*tasks)
 
 
-def main(urls, output_dir="downloads", num_chunks=4):
+def download(urls, output_dir="downloads", num_chunks=4):
     """Main function to initiate downloads."""
     start_time = time.time()
     logger.info(
@@ -180,17 +189,15 @@ def benchmark_chunk_counts(url, output_dir="downloads", max_chunks=4):
 
 if __name__ == "__main__":
     # Direct download URL for the specific file
-    url = "http://ipv4.download.thinkbroadband.com/100MB.zip"
-    output_dir = os.path.join(os.path.dirname(__file__), "downloads")
-
-    benchmark_chunk_counts(url, output_dir)
-
-
-if __name__ == "__main__":
-    # Direct download URL for the specific file
     urls = [
-        "https://huggingface.co/cognitivecomputations/Dolphin3.0-Llama3.1-8B-GGUF/blob/main/Dolphin3.0-Llama3.1-8B-Q4_0.gguf",
+        # "https://huggingface.co/cognitivecomputations/Dolphin3.0-Llama3.1-8B-GGUF/blob/main/Dolphin3.0-Llama3.1-8B-Q4_0.gguf",
+        "http://ipv4.download.thinkbroadband.com/100MB.zip",
     ]
     output_dir = os.path.join(os.path.dirname(__file__), "downloads")
     num_chunks = 3  # Number of parallel chunks
-    main(urls, output_dir, num_chunks)
+    download(urls, output_dir, num_chunks)
+
+    # Benchmarking example
+    # max_chunks = 8
+    # benchmark_url = "http://ipv4.download.thinkbroadband.com/100MB.zip"
+    # benchmark_chunk_counts(benchmark_url, output_dir, max_chunks)
