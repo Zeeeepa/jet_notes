@@ -6,7 +6,7 @@ from jet.file.utils import save_file
 from datetime import datetime
 
 
-def get_last_commit_dates_optimized(base_dir, extensions=None):
+def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1):
     if not os.path.isdir(base_dir):
         raise ValueError(f"{base_dir} is not a valid directory")
 
@@ -22,7 +22,11 @@ def get_last_commit_dates_optimized(base_dir, extensions=None):
         file_paths = []
         dir_paths = []
 
+        base_depth = len(base_dir.split(os.sep))
         for root, _, files in os.walk(base_dir):
+            current_depth = len(root.split(os.sep)) - base_depth
+            if current_depth > depth:
+                continue
             for name in files:
                 full_path = os.path.join(root, name)
                 rel_path = os.path.relpath(full_path, repo.working_tree_dir)
@@ -65,6 +69,9 @@ def get_last_commit_dates_optimized(base_dir, extensions=None):
 
         results = []
         for root, _, files in os.walk(base_dir):
+            current_depth = len(root.split(os.sep)) - base_depth
+            if current_depth > depth:
+                continue
             for name in files:
                 full_path = os.path.join(root, name)
                 rel_path = os.path.relpath(full_path, repo.working_tree_dir)
@@ -73,7 +80,8 @@ def get_last_commit_dates_optimized(base_dir, extensions=None):
                         "basename": name,
                         "updated_at": commit_times[rel_path],
                         "type": "file",
-                        "path": full_path
+                        "rel_path": rel_path,
+                        "path": full_path,
                     })
             for name in _:  # Directories
                 full_path = os.path.join(root, name)
@@ -83,7 +91,8 @@ def get_last_commit_dates_optimized(base_dir, extensions=None):
                         "basename": name,
                         "updated_at": commit_times[rel_path],
                         "type": "directory",
-                        "path": full_path
+                        "rel_path": rel_path,
+                        "path": full_path,
                     })
 
         sorted_results = sorted(results, key=lambda x: (
@@ -111,19 +120,22 @@ if __name__ == "__main__":
                         help="Filter files by these extensions, comma-separated (e.g., .ipynb,.md,.mx).")
     parser.add_argument("-f", "--output-file", type=str, default=None,
                         help="Optional path to save results as a JSON file.")
+    parser.add_argument("-d", "--depth", type=int, default=1,
+                        help="Limit the depth of folder traversal relative to base_dir (default: 1).")
     args = parser.parse_args()
 
     base_dir = args.base_dir
     # Split comma-separated extensions into a list, strip whitespace
     extensions = [ext.strip() for ext in args.extensions.split(',')
                   ] if args.extensions else None
+    depth = args.depth
 
     try:
-        updates = get_last_commit_dates_optimized(base_dir, extensions)
+        updates = get_last_commit_dates_optimized(base_dir, extensions, depth)
 
         for item in updates:
             print(
-                f"{item['rank']}. {item['basename']} ({item['type']}): {item['updated_at']}")
+                f"{item['rank']}. {item['rel_path']} ({item['type']}): {item['updated_at']}")
 
         output_file = args.output_file or os.path.join(
             base_dir, "_git_stats.json")
