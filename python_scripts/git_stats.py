@@ -2,7 +2,7 @@ from collections import OrderedDict
 import os
 import argparse
 from datetime import datetime
-from git import Repo, InvalidGitRepositoryError, NoSuchPathError
+from git import Repo, InvalidGitRepositoryError, NoSuchPathError, GitCommandError
 from jet.file.utils import save_file
 import fnmatch
 
@@ -40,7 +40,14 @@ def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_f
         repo = Repo(base_dir, search_parent_directories=True)
         if repo.bare:
             raise ValueError(f"{base_dir} is a bare repository")
-        is_git_repo = True
+        # Check if there are any commits
+        try:
+            # Attempt to access commits via HEAD or any ref
+            list(repo.iter_commits('HEAD', max_count=1))
+            is_git_repo = True
+        except (GitCommandError, ValueError):
+            # No commits found (e.g., new repo or missing default branch)
+            is_git_repo = False
     except (InvalidGitRepositoryError, NoSuchPathError):
         is_git_repo = False
 
@@ -114,16 +121,20 @@ def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_f
         # Get commit times for files and directories
         if all_paths:
             for path in all_paths:
-                # For directories, find ==>
-                if path in dir_paths:
-                    commits = list(repo.iter_commits(
-                        paths=[p for p in tracked_paths if p.startswith(path + os.sep)], max_count=1))
-                else:
-                    commits = list(repo.iter_commits(
-                        paths=[path], max_count=1))
-                if commits:
-                    commit_times[path] = format_macos_modified_time(
-                        commits[0].committed_date)
+                try:
+                    # For directories, find the latest commit affecting any file within
+                    if path in dir_paths:
+                        commits = list(repo.iter_commits(
+                            paths=[p for p in tracked_paths if p.startswith(path + os.sep)], max_count=1))
+                    else:
+                        commits = list(repo.iter_commits(
+                            paths=[path], max_count=1))
+                    if commits:
+                        commit_times[path] = format_macos_modified_time(
+                            commits[0].committed_date)
+                except (GitCommandError, ValueError):
+                    # Skip paths that cause errors (e.g., no commits for this path)
+                    continue
 
         # Second pass: build results
         for root, dirs, files in os.walk(base_dir):
