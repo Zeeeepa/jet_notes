@@ -8,9 +8,9 @@ import fnmatch
 
 
 def format_macos_modified_time(timestamp):
-    """Format datetime to match macOS 'Get Info' modified time display without 'Modified: ' prefix."""
+    """Format timestamp to ISO 8601 for parsability."""
     dt = datetime.fromtimestamp(timestamp)
-    return dt.strftime("%A, %B %-d, %Y at %-I:%M %p")
+    return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
 
 def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_file=None):
@@ -114,7 +114,7 @@ def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_f
         # Get commit times for files and directories
         if all_paths:
             for path in all_paths:
-                # For directories, find the latest commit affecting any file within
+                # For directories, find ==>
                 if path in dir_paths:
                     commits = list(repo.iter_commits(
                         paths=[p for p in tracked_paths if p.startswith(path + os.sep)], max_count=1))
