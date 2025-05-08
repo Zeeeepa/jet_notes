@@ -1,3 +1,9 @@
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/all-rag-techniques && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mlx-examples && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mpi4py && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-cookbooks && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/haystack-cookbook && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/MiniRAG && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/lm-evaluation-harness && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-lm && git pull && \
