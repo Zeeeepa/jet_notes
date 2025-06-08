@@ -5,9 +5,11 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-cookbo
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/haystack-cookbook && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/spaCy && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/spacy-course && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/llama-cpp-python && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/lm-evaluation-harness && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-lm && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-embeddings && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-vlm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/autogen && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/autogenhub && git pull && \
