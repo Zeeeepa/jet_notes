@@ -19,6 +19,7 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/faster-whisper &&
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/starlette && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/llama_index && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-community && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-experimental && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-postgres && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langmem && git pull && \
