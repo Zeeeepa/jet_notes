@@ -1,12 +1,18 @@
-cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/all-rag-techniques && git pull && \
+# cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/all-rag-techniques && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-all-techniques && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mlx-examples && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mpi4py && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-cookbooks && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/haystack-cookbook && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/rag_05_2025/ragas && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/rag_05_2025/RAG_Techniques && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/haystack-cookbook && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_07_2025/ai-agents-for-beginners && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/spaCy && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/spacy-course && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/llama-cpp-python && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/lm-evaluation-harness && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/KeyBERT && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-lm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-embeddings && git pull && \
