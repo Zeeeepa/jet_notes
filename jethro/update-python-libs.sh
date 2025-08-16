@@ -1,6 +1,5 @@
 # cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/all-rag-techniques && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-all-techniques && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mlx-examples && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mpi4py && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-cookbooks && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/haystack-cookbook && git pull && \
@@ -17,6 +16,7 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx && git pull &
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-lm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-embeddings && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-vlm && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mlx-examples && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/autogen && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/autogenhub && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/ollama && git pull && \
@@ -31,7 +31,7 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-postgre
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langmem && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langgraph && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langsmith-sdk && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/open-webui/backend/crewAI && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/open-webui/backend/crewAI/crewAI-tools && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/open-webui/backend/crewAI/crewAI-examples && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/crewAI && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/crewAI-tools && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/crewAI-examples && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/open-webui && git pull
