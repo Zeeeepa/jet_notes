@@ -5,6 +5,7 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-cookbo
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/haystack-cookbook && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/rag_05_2025/ragas && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/rag_05_2025/RAG_Techniques && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/rag_05_2025/ragflow && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/haystack-cookbook && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_07_2025/ai-agents-for-beginners && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/spaCy && git pull && \
@@ -16,6 +17,7 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx && git pull &
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-lm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-embeddings && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-vlm && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mcp-python-sdk && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mlx-examples && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/autogen && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/chatbot/autogenhub && git pull && \
