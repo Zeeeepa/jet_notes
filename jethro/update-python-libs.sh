@@ -1,4 +1,3 @@
-# cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/all-rag-techniques && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-all-techniques && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/mpi4py && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples_05_2025/rag-cookbooks && git pull && \
