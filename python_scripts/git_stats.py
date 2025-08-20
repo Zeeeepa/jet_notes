@@ -31,7 +31,7 @@ def get_last_commit_dates_optimized(
         # macOS system files
         '.DS_Store', 'Icon\r', '.Trashes', '.Spotlight-V100', '.fseventsd',
         # Development-related directories
-        '.git', 'node_modules', 'venv', '__pycache__', '.idea',
+        '.git', 'node_modules', 'venv', ".venv", '__pycache__', '.idea',
         # Temporary and compiled files
         '*.pyc', '*.pyo', '*.swp'
     }
