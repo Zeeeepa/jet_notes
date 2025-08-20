@@ -5,16 +5,24 @@ from datetime import datetime
 from git import Repo, InvalidGitRepositoryError, NoSuchPathError, GitCommandError
 from jet.file.utils import save_file
 import fnmatch
-from tqdm import tqdm  # Added for progress tracking
+from tqdm import tqdm
+from typing import Literal, Optional, List, Dict
 
 
-def format_macos_modified_time(timestamp):
+def format_macos_modified_time(timestamp: float) -> str:
     """Format timestamp to ISO 8601 for parsability."""
     dt = datetime.fromtimestamp(timestamp)
     return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
 
-def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_file=None):
+def get_last_commit_dates_optimized(
+    base_dir: str,
+    extensions: Optional[List[str]] = None,
+    depth: Optional[int] = None,
+    output_file: Optional[str] = None,
+    mode: Literal["auto", "git", "file"] = "auto",
+    type_filter: Literal["files", "dirs", "both"] = "both"
+) -> tuple[List[Dict], bool]:
     if not os.path.isdir(base_dir):
         raise ValueError(f"{base_dir} is not a valid directory")
 
@@ -41,20 +49,20 @@ def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_f
         repo = Repo(base_dir, search_parent_directories=True)
         if repo.bare:
             raise ValueError(f"{base_dir} is a bare repository")
-        # Check if there are any commits
         try:
-            # Attempt to access commits via HEAD or any ref
             list(repo.iter_commits('HEAD', max_count=1))
             is_git_repo = True
         except (GitCommandError, ValueError):
-            # No commits found (e.g., new repo or missing default branch)
             is_git_repo = False
     except (InvalidGitRepositoryError, NoSuchPathError):
         is_git_repo = False
 
+    # Determine effective mode: auto uses git if repo exists, else file; git falls back to file if no repo
+    effective_mode = "git" if mode == "auto" and is_git_repo else "file" if mode in [
+        "auto", "git"] else mode
     results = []
 
-    def is_excluded(path, name):
+    def is_excluded(path: str, name: str) -> bool:
         """Check if a file or directory should be excluded based on patterns."""
         if name in exclude_patterns:
             return True
@@ -64,13 +72,12 @@ def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_f
         rel_path = os.path.relpath(path, base_dir)
         return any(excluded in rel_path.split(os.sep) for excluded in exclude_patterns)
 
-    def calculate_depth(rel_path):
+    def calculate_depth(rel_path: str) -> int:
         """Calculate the depth of a relative path by counting path components."""
         components = rel_path.split(os.sep)
-        # Count non-empty components, ensuring depth is at least 1
         return len([c for c in components if c]) or 1
 
-    if is_git_repo:
+    if effective_mode == "git":
         # Git mode
         tracked_paths = set(repo.git.ls_files().splitlines())
         ignored_paths = {
@@ -82,157 +89,166 @@ def get_last_commit_dates_optimized(base_dir, extensions=None, depth=1, output_f
         file_paths = []
         dir_paths = []
 
-        # First pass: collect files and directories with progress
+        # First pass: collect files and directories
         for root, dirs, files in tqdm(os.walk(base_dir), desc="Scanning directories"):
             current_depth = len(root.split(os.sep)) - base_depth
-            if current_depth > depth:
+            if depth is not None and current_depth > depth:
                 continue
             # Filter out excluded directories
             dirs[:] = [d for d in dirs if not is_excluded(
                 os.path.join(root, d), d)]
-            for name in files:
-                if is_excluded(os.path.join(root, name), name):
-                    continue
-                full_path = os.path.join(root, name)
-                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
-                if rel_path in tracked_paths and full_path not in ignored_paths:
-                    if extensions:
-                        _, ext = os.path.splitext(name)
-                        if ext in extensions:
+            if type_filter in ["files", "both"]:
+                for name in files:
+                    if is_excluded(os.path.join(root, name), name):
+                        continue
+                    full_path = os.path.join(root, name)
+                    rel_path = os.path.relpath(
+                        full_path, repo.working_tree_dir)
+                    if rel_path in tracked_paths and full_path not in ignored_paths:
+                        if extensions:
+                            _, ext = os.path.splitext(name)
+                            if ext in extensions:
+                                file_paths.append(rel_path)
+                        else:
                             file_paths.append(rel_path)
-                    else:
-                        file_paths.append(rel_path)
-            for name in dirs:
-                full_path = os.path.join(root, name)
-                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
-                if rel_path not in ['.', '..'] and full_path not in ignored_paths:
-                    # Check if the directory contains any tracked files
-                    contains_tracked = any(
-                        os.path.relpath(os.path.join(
-                            subroot, fname), repo.working_tree_dir) in tracked_paths
-                        for subroot, _, fnames in os.walk(full_path)
-                        for fname in fnames
-                    )
-                    if contains_tracked:
-                        dir_paths.append(rel_path)
+            if type_filter in ["dirs", "both"]:
+                for name in dirs:
+                    full_path = os.path.join(root, name)
+                    rel_path = os.path.relpath(
+                        full_path, repo.working_tree_dir)
+                    if rel_path not in ['.', '..'] and full_path not in ignored_paths:
+                        contains_tracked = any(
+                            os.path.relpath(os.path.join(
+                                subroot, fname), repo.working_tree_dir) in tracked_paths
+                            for subroot, _, fnames in os.walk(full_path)
+                            for fname in fnames
+                        )
+                        if contains_tracked:
+                            dir_paths.append(rel_path)
 
         all_paths = sorted(list(set(file_paths + dir_paths)))
         commit_times = {}
 
-        # Optimized commit time retrieval
         # Batch process file commits
         file_commits = {}
-        if file_paths:
+        if file_paths and type_filter in ["files", "both"]:
             try:
                 commits = repo.iter_commits(paths=file_paths, max_count=1)
-                for commit in tqdm(commits, desc="Processing file commits", total=len(file_paths)):
-                    for path in commit.stats.files:
-                        if path in file_paths and path not in file_commits:
-                            file_commits[path] = format_macos_modified_time(
-                                commit.committed_date)
+                for path in tqdm(file_paths, desc="Processing file commits"):
+                    commits = list(repo.iter_commits(
+                        paths=[path], max_count=1))
+                    if commits:
+                        file_commits[path] = format_macos_modified_time(
+                            commits[0].committed_date)
             except (GitCommandError, ValueError):
                 pass
 
         # Process directory commits
-        for dir_path in tqdm(dir_paths, desc="Processing directory commits"):
-            try:
-                # Find the latest commit affecting any file in the directory
-                relevant_paths = [
-                    p for p in tracked_paths if p.startswith(dir_path + os.sep)]
-                if relevant_paths:
-                    commits = list(repo.iter_commits(
-                        paths=relevant_paths, max_count=1))
-                    if commits:
-                        commit_times[dir_path] = format_macos_modified_time(
-                            commits[0].committed_date)
-            except (GitCommandError, ValueError):
-                continue
+        if type_filter in ["dirs", "both"]:
+            for dir_path in tqdm(dir_paths, desc="Processing directory commits"):
+                try:
+                    relevant_paths = [
+                        p for p in tracked_paths if p.startswith(dir_path + os.sep)]
+                    if relevant_paths:
+                        commits = list(repo.iter_commits(
+                            paths=relevant_paths, max_count=1))
+                        if commits:
+                            commit_times[dir_path] = format_macos_modified_time(
+                                commits[0].committed_date)
+                except (GitCommandError, ValueError):
+                    continue
 
         # Merge file and directory commit times
         commit_times.update(file_commits)
 
-        # Second pass: build results with progress
+        # Second pass: build results
         for root, dirs, files in tqdm(os.walk(base_dir), desc="Building results"):
             current_depth = len(root.split(os.sep)) - base_depth
-            if current_depth > depth:
+            if depth is not None and current_depth > depth:
                 continue
             dirs[:] = [d for d in dirs if not is_excluded(
                 os.path.join(root, d), d)]
-            for name in files:
-                if is_excluded(os.path.join(root, name), name):
-                    continue
-                full_path = os.path.join(root, name)
-                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
-                if rel_path in commit_times and full_path not in ignored_paths:
-                    results.append({
-                        "basename": name,
-                        "updated_at": commit_times[rel_path],
-                        "type": "file",
-                        "rel_path": rel_path,
-                        "path": full_path,
-                        "depth": calculate_depth(rel_path)
-                    })
-            for name in dirs:
-                full_path = os.path.join(root, name)
-                rel_path = os.path.relpath(full_path, repo.working_tree_dir)
-                if rel_path in commit_times and full_path not in ignored_paths:
-                    results.append({
-                        "basename": name,
-                        "updated_at": commit_times[rel_path],
-                        "type": "directory",
-                        "rel_path": rel_path,
-                        "path": full_path,
-                        "depth": calculate_depth(rel_path)
-                    })
+            if type_filter in ["files", "both"]:
+                for name in files:
+                    if is_excluded(os.path.join(root, name), name):
+                        continue
+                    full_path = os.path.join(root, name)
+                    rel_path = os.path.relpath(
+                        full_path, repo.working_tree_dir)
+                    if rel_path in commit_times and full_path not in ignored_paths:
+                        results.append({
+                            "basename": name,
+                            "updated_at": commit_times[rel_path],
+                            "type": "file",
+                            "rel_path": rel_path,
+                            "path": full_path,
+                            "depth": calculate_depth(rel_path)
+                        })
+            if type_filter in ["dirs", "both"]:
+                for name in dirs:
+                    full_path = os.path.join(root, name)
+                    rel_path = os.path.relpath(
+                        full_path, repo.working_tree_dir)
+                    if rel_path in commit_times and full_path not in ignored_paths:
+                        results.append({
+                            "basename": name,
+                            "updated_at": commit_times[rel_path],
+                            "type": "directory",
+                            "rel_path": rel_path,
+                            "path": full_path,
+                            "depth": calculate_depth(rel_path)
+                        })
 
     else:
-        # Non-Git mode (use file modification times)
+        # File mode
         for root, dirs, files in tqdm(os.walk(base_dir), desc="Scanning files (non-Git)"):
             current_depth = len(root.split(os.sep)) - base_depth
-            if current_depth > depth:
+            if depth is not None and current_depth > depth:
                 continue
             dirs[:] = [d for d in dirs if not is_excluded(
                 os.path.join(root, d), d)]
-            for name in files:
-                if is_excluded(os.path.join(root, name), name):
-                    continue
-                full_path = os.path.join(root, name)
-                if extensions:
-                    _, ext = os.path.splitext(name)
-                    if ext not in extensions:
+            if type_filter in ["files", "both"]:
+                for name in files:
+                    if is_excluded(os.path.join(root, name), name):
                         continue
-                try:
-                    rel_path = os.path.relpath(full_path, base_dir)
-                    mtime = os.stat(full_path).st_mtime
-                    updated_at = format_macos_modified_time(mtime)
-                    results.append({
-                        "basename": name,
-                        "updated_at": updated_at,
-                        "type": "file",
-                        "rel_path": rel_path,
-                        "path": full_path,
-                        "depth": calculate_depth(rel_path)
-                    })
-                except Exception:
-                    continue
-            for name in dirs:
-                full_path = os.path.join(root, name)
-                if is_excluded(full_path, name):
-                    continue
-                try:
-                    rel_path = os.path.relpath(full_path, base_dir)
-                    mtime = os.stat(full_path).st_mtime
-                    updated_at = format_macos_modified_time(mtime)
-                    results.append({
-                        "basename": name,
-                        "updated_at": updated_at,
-                        "type": "directory",
-                        "rel_path": rel_path,
-                        "path": full_path,
-                        "depth": calculate_depth(rel_path)
-                    })
-                except Exception:
-                    continue
+                    full_path = os.path.join(root, name)
+                    if extensions:
+                        _, ext = os.path.splitext(name)
+                        if ext not in extensions:
+                            continue
+                    try:
+                        rel_path = os.path.relpath(full_path, base_dir)
+                        mtime = os.stat(full_path).st_mtime
+                        updated_at = format_macos_modified_time(mtime)
+                        results.append({
+                            "basename": name,
+                            "updated_at": updated_at,
+                            "type": "file",
+                            "rel_path": rel_path,
+                            "path": full_path,
+                            "depth": calculate_depth(rel_path)
+                        })
+                    except Exception:
+                        continue
+            if type_filter in ["dirs", "both"]:
+                for name in dirs:
+                    full_path = os.path.join(root, name)
+                    if is_excluded(full_path, name):
+                        continue
+                    try:
+                        rel_path = os.path.relpath(full_path, base_dir)
+                        mtime = os.stat(full_path).st_mtime
+                        updated_at = format_macos_modified_time(mtime)
+                        results.append({
+                            "basename": name,
+                            "updated_at": updated_at,
+                            "type": "directory",
+                            "rel_path": rel_path,
+                            "path": full_path,
+                            "depth": calculate_depth(rel_path)
+                        })
+                    except Exception:
+                        continue
 
     sorted_results = sorted(results, key=lambda x: (
         x['updated_at'], x['path']), reverse=True)
@@ -255,28 +271,34 @@ if __name__ == "__main__":
                         help="Filter files by these extensions, comma-separated (e.g., .ipynb,.md,.py).")
     parser.add_argument("-f", "--output-file", type=str, default=None,
                         help="Optional path to save results as a JSON file.")
-    parser.add_argument("-d", "--depth", type=int, default=1,
-                        help="Limit the depth of folder traversal relative to base_dir (default: 1).")
+    parser.add_argument("-d", "--depth", type=int, default=None, nargs="?",
+                        help="Limit the depth of folder traversal relative to base_dir (default: None, no limit).")
+    parser.add_argument("-m", "--mode", choices=["auto", "git", "file"], default="auto",
+                        help="Mode to retrieve timestamps: 'auto' uses git if repo exists else file, 'git' for commit times, 'file' for modification times (default: auto).")
+    parser.add_argument("-t", "--type", choices=["files", "dirs", "both"], default="both",
+                        help="Filter results to include files, directories, or both (default: both).")
     args = parser.parse_args()
 
     base_dir = args.base_dir
     extensions = [ext.strip() for ext in args.extensions.split(',')
                   ] if args.extensions else None
     depth = args.depth
+    mode = args.mode
+    type_filter = args.type
 
     try:
         # Run the function to determine if it's a Git repo and get results
         updates, is_git_repo = get_last_commit_dates_optimized(
-            base_dir, extensions, depth, None)
+            base_dir, extensions, depth, None, mode, type_filter)
 
-        # Determine default output file based on Git availability
-        default_filename = "_git_stats.json" if is_git_repo else "_file_stats.json"
+        # Determine default output file based on effective mode
+        default_filename = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
         output_file = args.output_file or os.path.join(
             base_dir, default_filename)
 
         # Re-run with the output file to ensure it's excluded
         updates, _ = get_last_commit_dates_optimized(
-            base_dir, extensions, depth, output_file)
+            base_dir, extensions, depth, output_file, mode, type_filter)
 
         for item in updates:
             print(
