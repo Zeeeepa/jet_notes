@@ -273,8 +273,8 @@ if __name__ == "__main__":
                         help="Optional path to save results as a JSON file.")
     parser.add_argument("-d", "--depth", type=int, default=None, nargs="?",
                         help="Limit the depth of folder traversal relative to base_dir (default: None, no limit).")
-    parser.add_argument("-m", "--mode", choices=["auto", "git", "file"], default="file",
-                        help="Mode to retrieve timestamps: 'auto' uses git if repo exists else file, 'git' for commit times, 'file' for modification times (default: file).")
+    parser.add_argument("-m", "--mode", choices=["auto", "git", "file"], default="auto",
+                        help="Mode to retrieve timestamps: 'auto' uses git if repo exists else file, 'git' for commit times, 'file' for modification times (default: auto).")
     parser.add_argument("-t", "--type", choices=["files", "dirs", "both"], default="files",
                         help="Filter results to include files, directories, or both (default: files).")
     args = parser.parse_args()
