@@ -5,4 +5,5 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/llama_index && gi
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-community && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mem0 && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/autogen
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/autogen && git pull && \
+cd ~
