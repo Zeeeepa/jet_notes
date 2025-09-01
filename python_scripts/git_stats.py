@@ -21,7 +21,8 @@ def get_last_commit_dates_optimized(
     depth: Optional[int] = None,
     output_file: Optional[str] = None,
     mode: Literal["auto", "git", "file"] = "auto",
-    type_filter: Literal["files", "dirs", "both"] = "both"
+    type_filter: Literal["files", "dirs", "both"] = "both",
+    file_pattern: Optional[str] = None  # New parameter for file name pattern
 ) -> tuple[List[Dict], bool]:
     if not os.path.isdir(base_dir):
         raise ValueError(f"{base_dir} is not a valid directory")
@@ -57,7 +58,7 @@ def get_last_commit_dates_optimized(
     except (InvalidGitRepositoryError, NoSuchPathError):
         is_git_repo = False
 
-    # Determine effective mode: auto uses git if repo exists, else file; git falls back to file if no repo
+    # Determine effective mode
     effective_mode = "git" if mode == "auto" and is_git_repo else "file" if mode in [
         "auto", "git"] else mode
     results = []
@@ -94,7 +95,6 @@ def get_last_commit_dates_optimized(
             current_depth = len(root.split(os.sep)) - base_depth
             if depth is not None and current_depth > depth:
                 continue
-            # Filter out excluded directories
             dirs[:] = [d for d in dirs if not is_excluded(
                 os.path.join(root, d), d)]
             if type_filter in ["files", "both"]:
@@ -107,10 +107,12 @@ def get_last_commit_dates_optimized(
                     if rel_path in tracked_paths and full_path not in ignored_paths:
                         if extensions:
                             _, ext = os.path.splitext(name)
-                            if ext in extensions:
-                                file_paths.append(rel_path)
-                        else:
-                            file_paths.append(rel_path)
+                            if ext not in extensions:
+                                continue
+                        # Apply file pattern filter
+                        if file_pattern and not fnmatch.fnmatch(name, file_pattern):
+                            continue
+                        file_paths.append(rel_path)
             if type_filter in ["dirs", "both"]:
                 for name in dirs:
                     full_path = os.path.join(root, name)
@@ -158,7 +160,6 @@ def get_last_commit_dates_optimized(
                 except (GitCommandError, ValueError):
                     continue
 
-        # Merge file and directory commit times
         commit_times.update(file_commits)
 
         # Second pass: build results
@@ -176,6 +177,9 @@ def get_last_commit_dates_optimized(
                     rel_path = os.path.relpath(
                         full_path, repo.working_tree_dir)
                     if rel_path in commit_times and full_path not in ignored_paths:
+                        # Apply file pattern filter
+                        if file_pattern and not fnmatch.fnmatch(name, file_pattern):
+                            continue
                         results.append({
                             "basename": name,
                             "updated_at": commit_times[rel_path],
@@ -216,6 +220,9 @@ def get_last_commit_dates_optimized(
                         _, ext = os.path.splitext(name)
                         if ext not in extensions:
                             continue
+                    # Apply file pattern filter
+                    if file_pattern and not fnmatch.fnmatch(name, file_pattern):
+                        continue
                     try:
                         rel_path = os.path.relpath(full_path, base_dir)
                         mtime = os.stat(full_path).st_mtime
@@ -237,7 +244,7 @@ def get_last_commit_dates_optimized(
                         continue
                     try:
                         rel_path = os.path.relpath(full_path, base_dir)
-                        mtime = os.stat(full_path).st_mtime
+                        mtime = os.path.stat(full_path).st_mtime
                         updated_at = format_macos_modified_time(mtime)
                         results.append({
                             "basename": name,
@@ -277,19 +284,22 @@ if __name__ == "__main__":
                         help="Mode to retrieve timestamps: 'auto' uses git if repo exists else file, 'git' for commit times, 'file' for modification times (default: auto).")
     parser.add_argument("-t", "--type", choices=["files", "dirs", "both"], default="files",
                         help="Filter results to include files, directories, or both (default: files).")
+    parser.add_argument("-p", "--file-pattern", type=str, default=None,
+                        help="Filter files by name pattern (e.g., 'test_*.py').")
     args = parser.parse_args()
 
     base_dir = args.base_dir
-    extensions = [ext.strip() for ext in args.extensions.split(',')
-                  ] if args.extensions else None
+    extensions = [ext.strip() for ext in args.extensions.split(
+        ',')] if args.extensions else None
     depth = args.depth
     mode = args.mode
     type_filter = args.type
+    file_pattern = args.file_pattern
 
     try:
         # Run the function to determine if it's a Git repo and get results
         updates, is_git_repo = get_last_commit_dates_optimized(
-            base_dir, extensions, depth, None, mode, type_filter)
+            base_dir, extensions, depth, None, mode, type_filter, file_pattern)
 
         # Determine default output file based on effective mode
         default_filename = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
@@ -298,12 +308,16 @@ if __name__ == "__main__":
 
         # Re-run with the output file to ensure it's excluded
         updates, _ = get_last_commit_dates_optimized(
-            base_dir, extensions, depth, output_file, mode, type_filter)
+            base_dir, extensions, depth, output_file, mode, type_filter, file_pattern)
 
         for item in updates[:10]:
             print(
                 f"{item['rank']}. {item['rel_path']} ({item['type']}, depth={item['depth']}): {item['updated_at']}")
 
+        # Ensure all 'path' fields are absolute before saving
+        for item in updates:
+            if "path" in item:
+                item["path"] = os.path.abspath(item["path"])
         save_file(updates, output_file)
         print(f"\nFile stats saved to: {output_file}")
 

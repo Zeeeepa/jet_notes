@@ -1,14 +1,14 @@
+# cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/docutils && git pull && \
+# cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/pydantic-ai && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/semantic-kernel && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langgraph && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mcp-python-sdk && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/docutils && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/ollama-python && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-community && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/TextBlob && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/llama_index && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-experimental && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/pydantic-ai && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langmem && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-vlm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mem0 && git pull && \
