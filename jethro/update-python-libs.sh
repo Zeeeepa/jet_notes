@@ -1,5 +1,8 @@
 # cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/docutils && git pull && \
 # cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/pydantic-ai && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-lm && git pull && \
+cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-vlm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/semantic-kernel && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langgraph && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mcp-python-sdk && git pull && \
@@ -10,15 +13,12 @@ cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/TextBlob && git p
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/llama_index && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-experimental && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langmem && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-vlm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mem0 && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/swarms && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/langchain-postgres && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/browser-use && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/litellm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/autogen && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx && git pull && \
-cd /Users/jethroestrada/Desktop/External_Projects/AI/repo-libs/mlx-lm && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples/GenAI_Agents && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples/all-rag-techniques && git pull && \
 cd /Users/jethroestrada/Desktop/External_Projects/AI/examples/ai-agents-for-beginners && git pull && \
