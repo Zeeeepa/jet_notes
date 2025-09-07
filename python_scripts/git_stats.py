@@ -149,14 +149,13 @@ def get_last_commit_dates_optimized(
         if type_filter in ["dirs", "both"]:
             for dir_path in tqdm(dir_paths, desc="Processing directory commits"):
                 try:
-                    relevant_paths = [
-                        p for p in tracked_paths if p.startswith(dir_path + os.sep)]
-                    if relevant_paths:
-                        commits = list(repo.iter_commits(
-                            paths=relevant_paths, max_count=1))
-                        if commits:
-                            commit_times[dir_path] = format_macos_modified_time(
-                                commits[0].committed_date)
+                    # Ask Git for the latest commit affecting anything in this directory (recursive)
+                    commits = list(repo.iter_commits(
+                        paths=[dir_path], max_count=1))
+                    if commits:
+                        commit_times[dir_path] = format_macos_modified_time(
+                            commits[0].committed_date
+                        )
                 except (GitCommandError, ValueError):
                     continue
 
@@ -244,16 +243,30 @@ def get_last_commit_dates_optimized(
                         continue
                     try:
                         rel_path = os.path.relpath(full_path, base_dir)
-                        mtime = os.path.stat(full_path).st_mtime
-                        updated_at = format_macos_modified_time(mtime)
-                        results.append({
-                            "basename": name,
-                            "updated_at": updated_at,
-                            "type": "directory",
-                            "rel_path": rel_path,
-                            "path": full_path,
-                            "depth": calculate_depth(rel_path)
-                        })
+
+                        # Find the latest modified time among all files inside (recursively)
+                        latest_mtime = None
+                        for subroot, _, fnames in os.walk(full_path):
+                            for fname in fnames:
+                                fpath = os.path.join(subroot, fname)
+                                try:
+                                    mtime = os.stat(fpath).st_mtime
+                                    if latest_mtime is None or mtime > latest_mtime:
+                                        latest_mtime = mtime
+                                except Exception:
+                                    continue
+
+                        if latest_mtime:
+                            updated_at = format_macos_modified_time(
+                                latest_mtime)
+                            results.append({
+                                "basename": name,
+                                "updated_at": updated_at,
+                                "type": "directory",
+                                "rel_path": rel_path,
+                                "path": full_path,
+                                "depth": calculate_depth(rel_path)
+                            })
                     except Exception:
                         continue
 
