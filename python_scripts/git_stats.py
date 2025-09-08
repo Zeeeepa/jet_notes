@@ -274,100 +274,80 @@ def get_last_commit_dates_optimized(
     return ranked_results, is_git_repo
 
 
+def process_file_mode(base_dir, extensions, depth, mode, type_filter, file_pattern, output_file):
+    updates, _ = get_last_commit_dates_optimized(
+        base_dir, extensions, depth, None, mode, type_filter, file_pattern
+    )
+    output_file = output_file or os.path.join(base_dir, "_file_stats.json")
+
+    updates = sorted(updates, key=lambda x: x["updated_at"], reverse=True)
+    for item in updates[:10]:
+        print(
+            f"{item['rank']}. {item['rel_path']} ({item['type']}, depth={item['depth']}): {item['updated_at']}")
+    for item in updates:
+        if "path" in item:
+            item["path"] = os.path.abspath(item["path"])
+    save_file(updates, output_file)
+    print(f"File stats saved to: {output_file}")
+
+
+def process_repo(repo_dir, extensions, depth, mode, type_filter, file_pattern, output_file):
+    updates, is_git_repo = get_last_commit_dates_optimized(
+        repo_dir, extensions, depth, None, mode, type_filter, file_pattern
+    )
+    default_filename = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
+    repo_output = output_file or os.path.join(repo_dir, default_filename)
+
+    for item in updates:
+        if "path" in item:
+            item["path"] = os.path.abspath(item["path"])
+    save_file(updates, repo_output)
+    print(f"Repo stats saved to: {repo_output}")
+    return updates
+
+
+def process_combined(base_dir, repos, extensions, depth, mode, type_filter, file_pattern, output_file):
+    combined = []
+    for repo_dir in repos:
+        print(f"\n=== Scanning repo: {repo_dir} ===")
+        updates = process_repo(repo_dir, extensions, depth,
+                               mode, type_filter, file_pattern, output_file)
+        combined.extend(updates)
+
+    combined = sorted(combined, key=lambda x: x["updated_at"], reverse=True)
+    combined_file = output_file or os.path.join(
+        base_dir, "_combined_stats.json")
+    save_file(combined, combined_file)
+    print(f"\nCombined stats saved to: {combined_file}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Get the last modified or commit dates of files and directories with macOS-style formatting."
     )
-    parser.add_argument("base_dir", nargs="?", default=os.getcwd(),
-                        help="The base directory of the Git repository or folder (default: current directory).")
-    parser.add_argument("-e", "--extensions",
-                        help="Filter files by these extensions, comma-separated (e.g., .ipynb,.md,.py).")
-    parser.add_argument("-f", "--output-file", type=str, default=None,
-                        help="Optional path to save results as a JSON file.")
-    parser.add_argument("-d", "--depth", type=int, default=None, nargs="?",
-                        help="Limit the depth of folder traversal relative to base_dir (default: None, no limit).")
-    parser.add_argument("-m", "--mode", choices=["auto", "git", "file"], default="auto",
-                        help="Mode to retrieve timestamps: 'auto' uses git if repo exists else file, 'git' for commit times, 'file' for modification times (default: auto).")
-    parser.add_argument("-t", "--type", choices=["files", "dirs", "both"], default="files",
-                        help="Filter results to include files, directories, or both (default: files).")
-    parser.add_argument("-p", "--file-pattern", type=str, default=None,
-                        help="Filter files by name or relative path pattern (e.g., '*mcp*').")
+    parser.add_argument("base_dir", nargs="?", default=os.getcwd())
+    parser.add_argument("-e", "--extensions")
+    parser.add_argument("-f", "--output-file", type=str, default=None)
+    parser.add_argument("-d", "--depth", type=int, default=None, nargs="?")
+    parser.add_argument(
+        "-m", "--mode", choices=["auto", "git", "file"], default="auto")
+    parser.add_argument(
+        "-t", "--type", choices=["files", "dirs", "both"], default="files")
+    parser.add_argument("-p", "--file-pattern", type=str, default=None)
     args = parser.parse_args()
 
     base_dir = args.base_dir
     extensions = [ext.strip() for ext in args.extensions.split(',')
                   ] if args.extensions else None
-    depth = args.depth
-    mode = args.mode
-    type_filter = args.type
-    file_pattern = args.file_pattern
 
-    # -------------------------
-    # NEW: Short-circuit for file mode
-    # -------------------------
-    if mode == "file":
-        updates, _ = get_last_commit_dates_optimized(
-            base_dir, extensions, depth, None, mode, type_filter, file_pattern
-        )
-        output_file = args.output_file or os.path.join(
-            base_dir, "_file_stats.json")
-
-        # Ensure sorting by updated_at desc
-        updates = sorted(updates, key=lambda x: x["updated_at"], reverse=True)
-
-        for item in updates[:10]:
-            print(
-                f"{item['rank']}. {item['rel_path']} ({item['type']}, depth={item['depth']}): {item['updated_at']}")
-        for item in updates:
-            if "path" in item:
-                item["path"] = os.path.abspath(item["path"])
-        save_file(updates, output_file)
-        print(f"File stats saved to: {output_file}")
-        exit(0)
-
-    # -------------------------
-    # Otherwise: git or auto mode
-    # -------------------------
-    git_repos = find_git_repos(base_dir)
-    combined_updates = []
-
-    if git_repos:
-        for repo_dir in git_repos:
-            print(f"\n=== Scanning repo: {repo_dir} ===")
-            updates, is_git_repo = get_last_commit_dates_optimized(
-                repo_dir, extensions, depth, None, mode, type_filter, file_pattern
-            )
-            default_filename = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
-            output_file = args.output_file or os.path.join(
-                repo_dir, default_filename)
-
-            for item in updates:
-                if "path" in item:
-                    item["path"] = os.path.abspath(item["path"])
-            save_file(updates, output_file)
-            print(f"Repo stats saved to: {output_file}")
-
-            combined_updates.extend(updates)
-
-        # Save combined results at base dir
-        combined_updates = sorted(
-            combined_updates, key=lambda x: x["updated_at"], reverse=True)
-        combined_file = args.output_file or os.path.join(
-            base_dir, "_combined_stats.json")
-        save_file(combined_updates, combined_file)
-        print(f"\nCombined stats saved to: {combined_file}")
-
+    if args.mode == "file":
+        process_file_mode(base_dir, extensions, args.depth, args.mode,
+                          args.type, args.file_pattern, args.output_file)
     else:
-        # No repos found → scan base dir normally
-        updates, is_git_repo = get_last_commit_dates_optimized(
-            base_dir, extensions, depth, None, mode, type_filter, file_pattern
-        )
-        default_filename = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
-        output_file = args.output_file or os.path.join(
-            base_dir, default_filename)
-
-        for item in updates:
-            if "path" in item:
-                item["path"] = os.path.abspath(item["path"])
-        save_file(updates, output_file)
-        print(f"Stats saved to: {output_file}")
+        repos = find_git_repos(base_dir)
+        if repos:
+            process_combined(base_dir, repos, extensions, args.depth,
+                             args.mode, args.type, args.file_pattern, args.output_file)
+        else:
+            process_repo(base_dir, extensions, args.depth, args.mode,
+                         args.type, args.file_pattern, args.output_file)
