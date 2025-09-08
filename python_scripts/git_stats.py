@@ -308,17 +308,22 @@ def process_repo(repo_dir, extensions, depth, mode, type_filter, file_pattern, o
 
 def process_combined(base_dir, repos, extensions, depth, mode, type_filter, file_pattern, output_file):
     combined = []
+    combined_file = output_file or os.path.join(
+        base_dir, "_combined_stats.json")
+
     for repo_dir in repos:
         print(f"\n=== Scanning repo: {repo_dir} ===")
         updates = process_repo(repo_dir, extensions, depth,
                                mode, type_filter, file_pattern, output_file)
         combined.extend(updates)
 
-    combined = sorted(combined, key=lambda x: x["updated_at"], reverse=True)
-    combined_file = output_file or os.path.join(
-        base_dir, "_combined_stats.json")
-    save_file(combined, combined_file)
-    print(f"\nCombined stats saved to: {combined_file}")
+        # Keep combined list sorted each time we update
+        combined = sorted(
+            combined, key=lambda x: x["updated_at"], reverse=True)
+
+        # Save after each repo is processed
+        save_file(combined, combined_file)
+        print(f"Updated combined stats saved to: {combined_file}")
 
 
 if __name__ == "__main__":
