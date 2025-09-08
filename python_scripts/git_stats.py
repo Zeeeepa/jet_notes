@@ -302,7 +302,34 @@ if __name__ == "__main__":
     type_filter = args.type
     file_pattern = args.file_pattern
 
+    # -------------------------
+    # NEW: Short-circuit for file mode
+    # -------------------------
+    if mode == "file":
+        updates, _ = get_last_commit_dates_optimized(
+            base_dir, extensions, depth, None, mode, type_filter, file_pattern
+        )
+        output_file = args.output_file or os.path.join(
+            base_dir, "_file_stats.json")
+
+        # Ensure sorting by updated_at desc
+        updates = sorted(updates, key=lambda x: x["updated_at"], reverse=True)
+
+        for item in updates[:10]:
+            print(
+                f"{item['rank']}. {item['rel_path']} ({item['type']}, depth={item['depth']}): {item['updated_at']}")
+        for item in updates:
+            if "path" in item:
+                item["path"] = os.path.abspath(item["path"])
+        save_file(updates, output_file)
+        print(f"File stats saved to: {output_file}")
+        exit(0)
+
+    # -------------------------
+    # Otherwise: git or auto mode
+    # -------------------------
     git_repos = find_git_repos(base_dir)
+    combined_updates = []
 
     if git_repos:
         for repo_dir in git_repos:
@@ -313,32 +340,34 @@ if __name__ == "__main__":
             default_filename = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
             output_file = args.output_file or os.path.join(
                 repo_dir, default_filename)
-            updates, _ = get_last_commit_dates_optimized(
-                repo_dir, extensions, depth, output_file, mode, type_filter, file_pattern
-            )
-            for item in updates[:10]:
-                print(
-                    f"{item['rank']}. {item['rel_path']} ({item['type']}, depth={item['depth']}): {item['updated_at']}")
+
             for item in updates:
                 if "path" in item:
                     item["path"] = os.path.abspath(item["path"])
             save_file(updates, output_file)
-            print(f"File stats saved to: {output_file}")
+            print(f"Repo stats saved to: {output_file}")
+
+            combined_updates.extend(updates)
+
+        # Save combined results at base dir
+        combined_updates = sorted(
+            combined_updates, key=lambda x: x["updated_at"], reverse=True)
+        combined_file = args.output_file or os.path.join(
+            base_dir, "_combined_stats.json")
+        save_file(combined_updates, combined_file)
+        print(f"\nCombined stats saved to: {combined_file}")
+
     else:
+        # No repos found → scan base dir normally
         updates, is_git_repo = get_last_commit_dates_optimized(
             base_dir, extensions, depth, None, mode, type_filter, file_pattern
         )
         default_filename = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
         output_file = args.output_file or os.path.join(
             base_dir, default_filename)
-        updates, _ = get_last_commit_dates_optimized(
-            base_dir, extensions, depth, output_file, mode, type_filter, file_pattern
-        )
-        for item in updates[:10]:
-            print(
-                f"{item['rank']}. {item['rel_path']} ({item['type']}, depth={item['depth']}): {item['updated_at']}")
+
         for item in updates:
             if "path" in item:
                 item["path"] = os.path.abspath(item["path"])
         save_file(updates, output_file)
-        print(f"File stats saved to: {output_file}")
+        print(f"Stats saved to: {output_file}")
