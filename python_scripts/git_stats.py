@@ -35,17 +35,43 @@ def generate_unique_output_filename(
     depth: Optional[int] = None,
     is_git_repo: bool = False
 ) -> str:
-    """Generate a unique output filename based on query parameters and timestamp."""
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    """Generate a deterministic output filename in a _stats_results subdirectory."""
     repo_name = os.path.basename(
         os.path.abspath(base_dir)).replace(os.sep, "_")
     mode_str = mode
     type_str = type_filter
-    ext_str = f"_ext_{'_'.join(extensions)}" if extensions else ""
+    ext_str = f"_ext_{'_'.join(sorted(extensions))}" if extensions else ""
     pattern_str = f"_pattern_{re.sub(r'[^a-zA-Z0-9._-]', '_', file_pattern)}" if file_pattern else ""
     depth_str = f"_depth_{depth}" if depth is not None else ""
-    base_filename = f"_git_stats_{timestamp}_{repo_name}_{mode_str}_{type_str}{ext_str}{pattern_str}{depth_str}.json" if is_git_repo else f"_file_stats_{timestamp}_{repo_name}_{mode_str}_{type_str}{ext_str}{pattern_str}{depth_str}.json"
-    return os.path.join(base_dir, base_filename)
+    base_filename = (
+        f"_git_stats_{repo_name}_{mode_str}_{type_str}{ext_str}{pattern_str}{depth_str}.json"
+        if is_git_repo
+        else f"_file_stats_{repo_name}_{mode_str}_{type_str}{ext_str}{pattern_str}{depth_str}.json"
+    )
+
+    # Place output in _stats_results subdirectory
+    output_dir = os.path.join(base_dir, "_stats_results")
+    os.makedirs(output_dir, exist_ok=True)
+    return os.path.join(output_dir, base_filename)
+
+
+def check_is_git_repo(base_dir: str) -> bool:
+    is_git_repo = False
+    repo = None
+
+    try:
+        repo = Repo(base_dir, search_parent_directories=True)
+        if repo.bare:
+            raise ValueError(f"{base_dir} is a bare repository")
+        try:
+            list(repo.iter_commits('HEAD', max_count=1))
+            is_git_repo = True
+        except (GitCommandError, ValueError):
+            is_git_repo = False
+    except (InvalidGitRepositoryError, NoSuchPathError):
+        is_git_repo = False
+
+    return is_git_repo
 
 
 def get_last_commit_dates_optimized(
@@ -63,26 +89,13 @@ def get_last_commit_dates_optimized(
     exclude_patterns = {
         '.DS_Store', 'Icon\r', '.Trashes', '.Spotlight-V100', '.fseventsd',
         '.git', 'node_modules', 'venv', ".venv", '__pycache__', '.idea',
-        '*.pyc', '*.pyo', '*.swp'
+        '*.pyc', '*.pyo', '*.swp', 'stats_results'
     }
     if output_file:
         exclude_patterns.add(os.path.basename(output_file))
 
     base_depth = len(base_dir.split(os.sep))
-    is_git_repo = False
-    repo = None
-
-    try:
-        repo = Repo(base_dir, search_parent_directories=True)
-        if repo.bare:
-            raise ValueError(f"{base_dir} is a bare repository")
-        try:
-            list(repo.iter_commits('HEAD', max_count=1))
-            is_git_repo = True
-        except (GitCommandError, ValueError):
-            is_git_repo = False
-    except (InvalidGitRepositoryError, NoSuchPathError):
-        is_git_repo = False
+    is_git_repo = check_is_git_repo(base_dir)
 
     effective_mode = "git" if mode == "auto" and is_git_repo else "file" if mode in [
         "auto", "git"] else mode
@@ -102,6 +115,8 @@ def get_last_commit_dates_optimized(
         return len([c for c in components if c]) or 1
 
     if effective_mode == "git":
+        repo = Repo(base_dir, search_parent_directories=True)
+
         tracked_paths = set(repo.git.ls_files().splitlines())
         ignored_paths = {
             os.path.join(repo.working_tree_dir, p)
@@ -130,6 +145,7 @@ def get_last_commit_dates_optimized(
                             _, ext = os.path.splitext(name)
                             if ext not in extensions:
                                 continue
+                        matched_pattern = None
                         if file_pattern:
                             patterns = file_pattern.split(',')
                             if not any(
@@ -138,6 +154,10 @@ def get_last_commit_dates_optimized(
                                 for p in patterns
                             ):
                                 continue
+                            for p in patterns:
+                                if fnmatch.fnmatch(name, p.strip()) or fnmatch.fnmatch(rel_path, p.strip()):
+                                    matched_pattern = p.strip()
+                                    break
                         file_paths.append(rel_path)
             if type_filter in ["dirs", "both"]:
                 for name in dirs:
@@ -193,7 +213,13 @@ def get_last_commit_dates_optimized(
                     full_path = os.path.join(root, name)
                     rel_path = os.path.relpath(
                         full_path, repo.working_tree_dir)
+                    # Only include files with matching extensions
+                    if extensions:
+                        _, ext = os.path.splitext(name)
+                        if ext not in extensions:
+                            continue
                     if rel_path in commit_times and full_path not in ignored_paths:
+                        matched_pattern = None
                         if file_pattern:
                             patterns = file_pattern.split(',')
                             if not any(
@@ -202,13 +228,18 @@ def get_last_commit_dates_optimized(
                                 for p in patterns
                             ):
                                 continue
+                            for p in patterns:
+                                if fnmatch.fnmatch(name, p.strip()) or fnmatch.fnmatch(rel_path, p.strip()):
+                                    matched_pattern = p.strip()
+                                    break
                         results.append({
                             "basename": name,
                             "updated_at": commit_times[rel_path],
                             "type": "file",
                             "rel_path": rel_path,
                             "path": full_path,
-                            "depth": calculate_depth(rel_path)
+                            "depth": calculate_depth(rel_path),
+                            "matched_pattern": matched_pattern
                         })
             if type_filter in ["dirs", "both"]:
                 for name in dirs:
@@ -241,6 +272,7 @@ def get_last_commit_dates_optimized(
                         _, ext = os.path.splitext(name)
                         if ext not in extensions:
                             continue
+                    matched_pattern = None
                     if file_pattern:
                         patterns = file_pattern.split(',')
                         if not any(
@@ -250,6 +282,12 @@ def get_last_commit_dates_optimized(
                             for p in patterns
                         ):
                             continue
+                        for p in patterns:
+                            if fnmatch.fnmatch(name, p.strip()) or fnmatch.fnmatch(
+                                os.path.relpath(full_path, base_dir), p.strip()
+                            ):
+                                matched_pattern = p.strip()
+                                break
                     try:
                         rel_path = os.path.relpath(full_path, base_dir)
                         mtime = os.stat(full_path).st_mtime
@@ -260,7 +298,8 @@ def get_last_commit_dates_optimized(
                             "type": "file",
                             "rel_path": rel_path,
                             "path": full_path,
-                            "depth": calculate_depth(rel_path)
+                            "depth": calculate_depth(rel_path),
+                            "matched_pattern": matched_pattern
                         })
                     except Exception:
                         continue
@@ -344,8 +383,13 @@ def process_repo(repo_dir, extensions, depth, mode, type_filter, file_pattern, o
 
 def process_combined(base_dir, repos, extensions, depth, mode, type_filter, file_pattern, output_file):
     combined = []
-    combined_file = output_file or generate_unique_output_filename(
-        base_dir, extensions, mode, type_filter, file_pattern, depth, True
+    combined_file = output_file or os.path.join(
+        base_dir, "_stats_results",
+        os.path.basename(
+            generate_unique_output_filename(
+                base_dir, extensions, mode, type_filter, file_pattern, depth, True
+            )
+        ).replace("_git_stats_", "_combined_git_stats_")
     )
 
     for repo_dir in repos:
@@ -358,9 +402,10 @@ def process_combined(base_dir, repos, extensions, depth, mode, type_filter, file
         combined = sorted(
             combined, key=lambda x: x["updated_at"], reverse=True)
 
-        # Save after each repo is processed
-        save_file(combined, combined_file)
-        print(f"Updated combined stats saved to: {combined_file}")
+        if not check_is_git_repo(base_dir):
+            # Save after each repo is processed
+            save_file(combined, combined_file)
+            print(f"Updated combined stats saved to: {combined_file}")
 
 
 if __name__ == "__main__":
