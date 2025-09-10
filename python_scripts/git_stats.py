@@ -354,7 +354,9 @@ def process_file_mode(base_dir, extensions, depth, mode, type_filter, file_patte
         base_dir, extensions, mode, type_filter, file_pattern, depth, is_git_repo
     )
 
-    updates = sorted(updates, key=lambda x: x["updated_at"], reverse=True)
+    # Sort by parsed datetime for correct chronological order
+    updates = sorted(updates, key=lambda x: datetime.fromisoformat(
+        x["updated_at"]), reverse=True)
     for item in updates[:10]:
         print(
             f"{item['rank']}. {item['rel_path']} ({item['type']}, depth={item['depth']}): {item['updated_at']}")
