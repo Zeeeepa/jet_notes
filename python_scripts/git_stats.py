@@ -364,8 +364,8 @@ def process_file_mode(base_dir, extensions, depth, mode, type_filter, file_patte
     for item in updates:
         if "path" in item:
             item["path"] = os.path.abspath(item["path"])
-    save_file(updates, base_output_file)
     save_file(updates, output_file)
+    save_file(updates, base_output_file)
     print(f"File stats saved to: {base_output_file}")
 
 
@@ -373,7 +373,8 @@ def process_repo(repo_dir, extensions, depth, mode, type_filter, file_pattern, o
     updates, is_git_repo = get_last_commit_dates_optimized(
         repo_dir, extensions, depth, None, mode, type_filter, file_pattern
     )
-    base_output_file = "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json"
+    base_output_file = os.path.join(
+        repo_dir, "_git_stats.json" if is_git_repo and mode != "file" else "_file_stats.json")
     output_file = output_file or generate_unique_output_filename(
         repo_dir, extensions, mode, type_filter, file_pattern, depth, is_git_repo
     )
@@ -381,8 +382,8 @@ def process_repo(repo_dir, extensions, depth, mode, type_filter, file_pattern, o
     for item in updates:
         if "path" in item:
             item["path"] = os.path.abspath(item["path"])
-    save_file(updates, base_output_file)
     save_file(updates, output_file)
+    save_file(updates, base_output_file)
     print(f"Repo stats saved to: {base_output_file}")
     return updates
 
@@ -411,8 +412,8 @@ def process_combined(base_dir, repos, extensions, depth, mode, type_filter, file
 
         if not check_is_git_repo(base_dir):
             # Save after each repo is processed
-            save_file(combined, base_combined_file)
             save_file(combined, combined_file)
+            save_file(combined, base_combined_file)
             print(f"Updated combined stats saved to: {base_combined_file}")
 
 
