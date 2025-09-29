@@ -2,12 +2,11 @@
 
 # Base directories
 BASE_DIR=~/Desktop/External_Projects/AI
-TARGETS=("repo-libs" "examples" "lessons")
+TARGETS=("repo-libs" "examples" "lessons" "apps")
 
 # Exclude list (absolute paths)
 EXCLUDES=(
   "$BASE_DIR/repo-libs/docutils"
-  "$BASE_DIR/repo-libs/pydantic-ai"
 )
 
 echo "🔄 Updating Git repositories in $BASE_DIR..."
