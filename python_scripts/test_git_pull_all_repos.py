@@ -1,6 +1,6 @@
-# tests/test_git_pull_all_repos.py
 from __future__ import annotations
 
+import json
 import subprocess
 from pathlib import Path
 
@@ -156,3 +156,109 @@ class TestGitPullAllRepos:
 
         mock_find.assert_called_once()
         assert mock_find.call_args[0][0] == expected
+
+
+class TestGitPullAllReposOutput:
+    def test_writes_progress_file_incrementally(self, mocker, tmp_path):
+        # Given
+        repos = ["/repo/A", "/repo/B"]
+        out_file = tmp_path / "progress.json"
+
+        mocker.patch(
+            "git_pull_all_repos.find_git_repositories",
+            return_value=(Path(p) for p in repos),
+        )
+
+        outcomes = [
+            ("success", "Pulled successfully."),
+            ("failed", "Merge conflict"),
+        ]
+
+        def fake_pull(repo: Path):
+            idx = repos.index(str(repo))
+            return outcomes[idx]
+
+        mocker.patch("git_pull_all_repos.run_git_pull", side_effect=fake_pull)
+
+        git_pull_all_repos._out_path = out_file
+
+        # When
+        git_pull_all_repos("/base")
+
+        # Then
+        assert out_file.exists()
+        data = json.loads(out_file.read_text())
+
+        expected = {
+            str(Path("/repo/A")): {
+                "status": "success",
+                "message": "Pulled successfully.",
+            },
+            str(Path("/repo/B")): {
+                "status": "failed",
+                "message": "Merge conflict",
+            },
+        }
+
+        assert data == expected
+
+        del git_pull_all_repos._out_path
+
+
+class TestGitPullAllReposOutputEdgeCases:
+    def test_out_file_written_when_no_repos_found(self, mocker, tmp_path):
+        # Given
+        out_file = tmp_path / "progress.json"
+
+        mocker.patch(
+            "git_pull_all_repos.find_git_repositories",
+            return_value=iter([]),
+        )
+        mocker.patch("git_pull_all_repos.run_git_pull")
+
+        git_pull_all_repos._out_path = out_file
+
+        # When
+        git_pull_all_repos("/empty")
+
+        # Then
+        assert out_file.exists()
+        data = json.loads(out_file.read_text())
+        assert data == {}
+
+        del git_pull_all_repos._out_path
+
+    def test_creates_parent_directories_for_out_file(self, mocker, tmp_path):
+        # Given
+        repos = ["/repo/one"]
+        out_file = tmp_path / "nested" / "dir" / "progress.json"
+
+        mocker.patch(
+            "git_pull_all_repos.find_git_repositories",
+            return_value=(Path(p) for p in repos),
+        )
+
+        mocker.patch(
+            "git_pull_all_repos.run_git_pull",
+            return_value=("success", "Pulled successfully."),
+        )
+
+        git_pull_all_repos._out_path = out_file
+
+        # When
+        git_pull_all_repos("/base")
+
+        # Then
+        assert out_file.exists()
+        data = json.loads(out_file.read_text())
+
+        expected = {
+            str(Path("/repo/one")): {
+                "status": "success",
+                "message": "Pulled successfully.",
+            }
+        }
+
+        assert data == expected
+
+        del git_pull_all_repos._out_path

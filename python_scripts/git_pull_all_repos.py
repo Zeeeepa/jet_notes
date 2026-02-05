@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 from pathlib import Path
 from typing import Literal
@@ -47,6 +48,13 @@ def run_git_pull(
         return "error", f"Exception: {exc.__class__.__name__}: {exc}"
 
 
+def _write_progress(out_path: Path, data: dict[str, dict[str, str]]) -> None:
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = out_path.with_suffix(out_path.suffix + ".tmp")
+    tmp_path.write_text(json.dumps(data, indent=2, sort_keys=True))
+    tmp_path.replace(out_path)
+
+
 def git_pull_all_repos(target_dir: str | Path = ".") -> None:
     """
     Find all git repositories under target_dir and run `git pull` in each.
@@ -61,6 +69,8 @@ def git_pull_all_repos(target_dir: str | Path = ".") -> None:
     repos = list(find_git_repositories(base_path))
     total = len(repos)
 
+    progress_data: dict[str, dict[str, str]] = {}
+
     if total == 0:
         console.print("[yellow]No git repositories found.[/yellow]")
         # Always create progress — makes mocking easier and consistent
@@ -72,8 +82,10 @@ def git_pull_all_repos(target_dir: str | Path = ".") -> None:
             TimeElapsedColumn(),
             transient=True,
         ):
-            pass  # do nothing but ensures Progress context used in all cases
+            pass
         console.print("\n")
+        if out_path := getattr(git_pull_all_repos, "_out_path", None):
+            _write_progress(out_path, progress_data)
         return
 
     console.print(
@@ -105,6 +117,14 @@ def git_pull_all_repos(target_dir: str | Path = ".") -> None:
 
             status, message = run_git_pull(repo)
             stats[status] += 1
+
+            progress_data[str(repo)] = {
+                "status": status,
+                "message": message,
+            }
+
+            if out_path := getattr(git_pull_all_repos, "_out_path", None):
+                _write_progress(out_path, progress_data)
 
             icon = {
                 "success": "[green]✓[/green]",
@@ -160,8 +180,22 @@ def main():
         default=".",
         help="Target directory to search (default: current directory)",
     )
+    parser.add_argument(
+        "-o",
+        "--out",
+        dest="out",
+        type=Path,
+        help="Save progress status to JSON file",
+    )
     args = parser.parse_args()
+
+    if args.out is not None:
+        git_pull_all_repos._out_path = args.out.expanduser().resolve()
+
     git_pull_all_repos(args.target_dir)
+
+    if hasattr(git_pull_all_repos, "_out_path"):
+        del git_pull_all_repos._out_path
 
 
 if __name__ == "__main__":
